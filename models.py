@@ -76,4 +76,85 @@ Example: name=Bamako, kind=District => District of Bamako '''
             return self.name
         else:
             return _(u"%(type)s of %(area)s.") % {'type': self.kind.name, \
-                                                 'area': self.name,}
+                                                      'area': self.name,}
+
+
+################################
+## imported from health_facility
+
+class FacilityType(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=30, unique=True)
+
+    class Meta:
+        verbose_name = _("Facility Type")
+        verbose_name_plural = _("Facility Types")
+
+    def __unicode__(self):
+        return self.name
+
+
+class Facility(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField(max_length=64, blank=True, null=False)
+    type = models.ForeignKey(FacilityType, blank=True, null=True)
+
+    catchment_areas = models.ManyToManyField(Area, null=True, blank=True, related_name='catchment')
+    location = models.ForeignKey(Point, null=True, blank=True)
+    area = models.ForeignKey(Area, null=True, blank=True, related_name='facility',)
+
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='facility')
+
+    class Meta:
+        verbose_name = _("Facility")
+        verbose_name_plural = _("Facilities")
+
+
+    def __unicode__(self):
+        return u"%s %s" % (self.type, self.name)
+
+
+    def is_root(self):
+        if self.parent==None:
+            return True
+        else:
+            return False
+
+    def get_children(self):
+        #import pdb; pdb.set_trace()
+
+        children = self._default_manager.filter(parent=self)
+        return children
+
+
+    def get_descendants(self):
+        descendants = children = self.get_children()
+
+        for child in children:
+            if child.has_children:
+                descendants = descendants | child.descendants
+        return descendants
+
+    @property
+    def is_child_node(self):
+        children=self._default_manager.filter(parent=self).count()
+        if children > 0:
+            return False
+        else:
+            return True
+    @property
+    def has_children(self):
+        children=self._default_manager.filter(parent=self).count()
+        if children > 0:
+            return True
+        else:
+            return False
+   
+    @property
+    def children(self,):
+        return self.get_children()
+    
+    @property
+    def descendants(self,):
+         return self.get_descendants()
+
