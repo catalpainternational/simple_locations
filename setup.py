@@ -18,7 +18,7 @@ setup(
     url='https://github.com/catalpainternational/simple_locations',
     include_package_data=True,
 
-    packages=['locations'],
+    packages=['simple_locations'],
     package_data={'simple_locations':['README.md']},
     zip_safe=False,
     classifiers=[
