@@ -4,11 +4,14 @@
 
 from django.contrib import admin
 from django import forms
-from mptt.admin import MPTTModelAdmin
 
-from models import Point, AreaType, Area, Facility, FacilityType
+from mptt.admin import MPTTModelAdmin
 from mptt.admin import MPTTChangeList
-from catalpa.lib.autocomplete_admin import FkAutocompleteAdmin
+
+from simple_locations.autocomplete_admin import FkAutocompleteAdmin
+from simple_locations.models import Point, AreaType, Area, Facility, FacilityType
+
+
 class PointAdmin(admin.ModelAdmin):
     list_display = ('id', 'latitude', 'longitude')
 
