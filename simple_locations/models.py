@@ -72,12 +72,13 @@ class Area(MPTTModel):
 Example: name=Bamako, kind=District => District of Bamako '''
 
         # don't add-in kind if kind name is already part of name.
-        if (not self.parent) or (not self.kind) or self.name.startswith(self.kind.name):
-            return self.name
-        else:
-            return _(u"%(type)s of %(area)s.") % {'type': self.kind.name, \
-                                                      'area': self.name,}
-
+        #if (not self.parent) or (not self.kind) or self.name.startswith(self.kind.name):
+        #    return self.name
+        #else:
+        #    return _(u"%(type)s of %(area)s.") % {'type': self.kind.name, \
+        #                                              'area': self.name,}
+        
+        return self.name
 
 ################################
 ## imported from health_facility
