@@ -1,25 +1,19 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
 
 setup(
     name='simple_locations',
-    version='1.0',
-    license="",
-
-    install_requires = [
-        "",
-
-],
+    version='1.0b',
+    license="BSD",
 
     description="The common location package used for catalpa's projects.",
     long_description=open('README.md').read(),
     author='Anders Hofstee, Nicoas Hoibian',
     author_email='a.hofstee@catalpainternational.org',
-
     url='https://github.com/catalpainternational/simple_locations',
-    include_package_data=True,
 
-    packages=['simple_locations'],
-    package_data={'simple_locations':['README.md']},
+    packages=find_packages(),
+    include_package_data=True,
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',

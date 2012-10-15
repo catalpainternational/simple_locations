@@ -1,0 +1,5 @@
+include README.md
+recursive-include simple_locations/static *
+recursive-include simple_locations/templates *
+recursive-include simple_locations/fixtures *
+recursive-include simple_locations/locale *
