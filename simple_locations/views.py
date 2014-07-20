@@ -9,8 +9,8 @@ from django.http import HttpResponseRedirect
 from mptt.exceptions import InvalidMove
 from django.views.decorators.cache import cache_control
 from django.conf import settings
-
-
+from django.core import serializers
+from django.http import HttpResponse
 
 #firefox likes to aaggressively cache forms set cache control to false to override this
 @cache_control(no_cache=True)
@@ -164,3 +164,22 @@ def delete_location(request, area_id):
 def render_location(request):
     nodes = Area.tree.all()
     return render_to_response('simple_locations/treepanel.html',{'nodes':nodes})
+
+
+def area_search(request):
+    import json
+    areadetails = []
+    if request.GET.__contains__('query'):
+        objects = Area.objects.filter(name__iregex=request.GET['query'])
+    else:
+        objects = Area.objects.all()
+    for area in objects:
+        areadetail = {}
+        areadetail['value'] = area.pk
+        areadetail['name']= area.name
+        areadetail['kind'] = area.kind.name
+        if area.parent:
+            areadetail['parentname'] = area.parent.name
+            areadetail['parentkind'] = area.parent.kind.name
+        areadetails.append(areadetail)
+    return HttpResponse(json.dumps(areadetails))

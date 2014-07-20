@@ -1,5 +1,5 @@
 from django.conf.urls import patterns
-from simple_locations.views import edit_location, add_location, delete_location, render_location, simple_locations
+from simple_locations.views import edit_location, add_location, delete_location, render_location, simple_locations, area_search
 
 urlpatterns = patterns('',
    (r'^simple_locations/edit/(?P<area_id>[0-9]+)/$', edit_location),
@@ -7,4 +7,5 @@ urlpatterns = patterns('',
    (r'^simple_locations/delete/(?P<area_id>[0-9]+)/$', delete_location),
    (r'^simple_locations/render_tree/$', render_location),
    (r'^simple_locations/$', simple_locations),
+   (r'^areasearch/$', area_search),
 )
