@@ -56,7 +56,6 @@
 from django import forms
 from django.conf import settings
 from django.utils.safestring import mark_safe
-from django.utils.text import truncate_words
 from django.template.loader import render_to_string
 from django.contrib.admin.widgets import ForeignKeyRawIdWidget
 import operator
@@ -67,10 +66,17 @@ from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.text import get_text_list
-# added by mikele
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns
+try:
+    from django.utils.text import truncate_words
+except ImportError:
+    from django.utils.text import Truncator
+    from django.utils.functional import allow_lazy
 
-
+    def truncate_words(s, num, end_text='...'):
+        truncate = end_text and ' %s' % end_text or ''
+        return Truncator(s).words(num, truncate=truncate)
+    truncate_words = allow_lazy(truncate_words, unicode)
 
 
 class FkSearchInput(ForeignKeyRawIdWidget):
