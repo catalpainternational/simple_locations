@@ -10,6 +10,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy as __
 # South
 import mptt
 from mptt.models import MPTTModel
+from mptt.managers import TreeManager
 
 
 try:
@@ -47,6 +48,8 @@ class AreaType(models.Model):
 
 
 class Area(MPTTModel):
+	#added to squash mptt deprecatino of .tree warning    
+	objects = tree = TreeManager()
 
     class Meta:
         unique_together = ('code', 'kind')
