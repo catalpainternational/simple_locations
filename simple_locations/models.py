@@ -77,10 +77,12 @@ Example District of Bamako'''
         return u"%(type)s of %(area)s" % {'type': self.kind.name, 'area': self.name}
 
     def display_with_parent(self):
-        ''' print Area name and kind and parent name and kind
+        '''Print Area name and kind and parent name and kind
 
-Example: District of Bamako in '''
+Example: Aldeia of Baha-Neo in Suco of Lia Ruca'''
         if not self.parent:
+            return self.display_name_and_type()
+        elif self.kind.name == 'District':
             return self.display_name_and_type()
         else:
             return u"%(this)s in %(parent)s" % \
