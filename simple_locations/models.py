@@ -70,16 +70,24 @@ class Area(MPTTModel):
     def delete(self):
         super(Area, self).delete()
 
-    def display_name_and_type(self):
+    def get_ancestor_at_level(self, level=2):
+        """Get the area ancestor at a given level
+               
+        Will travel the tree until it reaches the level or return self if already under that level"""
+        if self.get_level() <= level:
+            return self
+        return self.get_ancestors()[level]
+                                               
+def display_name_and_type(self):
         '''Area name and type
 
-Example District of Bamako'''
+        Example District of Bamako'''
         return u"%(type)s of %(area)s" % {'type': self.kind.name, 'area': self.name}
 
     def display_with_parent(self):
         '''Print Area name and kind and parent name and kind
 
-Example: Aldeia of Baha-Neo in Suco of Lia Ruca'''
+        Example: Aldeia of Baha-Neo in Suco of Lia Ruca'''
         if not self.parent:
             return self.display_name_and_type()
         elif self.kind.name == 'District':
@@ -94,7 +102,7 @@ Example: Aldeia of Baha-Neo in Suco of Lia Ruca'''
     def __unicode__(self):
         ''' print Area name from its Kind and parent
 
-Example: name=Bamako, kind=District => District of Bamako '''
+        Example: Bamako '''
 
         # don't add-in kind if kind name is already part of name.
         # if (not self.parent) or (not self.kind) or self.name.startswith(self.kind.name):
