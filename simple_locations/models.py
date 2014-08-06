@@ -78,7 +78,7 @@ class Area(MPTTModel):
             return self
         return self.get_ancestors()[level]
                                                
-def display_name_and_type(self):
+    def display_name_and_type(self):
         '''Area name and type
 
         Example District of Bamako'''
