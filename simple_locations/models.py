@@ -48,7 +48,7 @@ class AreaType(models.Model):
 
 
 class Area(MPTTModel):
-    #added to squash mptt deprecatino of .tree warning    
+    #added to squash mptt deprecatino of .tree warning
     objects = tree = TreeManager()
 
     class Meta:
@@ -72,12 +72,12 @@ class Area(MPTTModel):
 
     def get_ancestor_at_level(self, level=2):
         """Get the area ancestor at a given level
-               
+
         Will travel the tree until it reaches the level or return self if already under that level"""
         if self.get_level() <= level:
             return self
         return self.get_ancestors()[level]
-                                               
+
     def display_name_and_type(self):
         '''Area name and type
 
@@ -122,8 +122,8 @@ class FacilityType(models.Model):
     slug = models.CharField(max_length=30, unique=True)
 
     class Meta:
-        verbose_name = _("Facility Type")
-        verbose_name_plural = _("Facility Types")
+        verbose_name = __("Facility Type")
+        verbose_name_plural = __("Facility Types")
 
     def __unicode__(self):
         return self.name
@@ -144,8 +144,8 @@ class Facility(models.Model):
         'self', null=True, blank=True, related_name='facility')
 
     class Meta:
-        verbose_name = _("Facility")
-        verbose_name_plural = _("Facilities")
+        verbose_name = __("Facility")
+        verbose_name_plural = __("Facilities")
 
     def __unicode__(self):
         return u"%s %s" % (self.type, self.name)
