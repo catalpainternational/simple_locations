@@ -6,7 +6,6 @@ from django.contrib import admin
 from django import forms
 
 from mptt.admin import MPTTModelAdmin
-from mptt.admin import MPTTChangeList
 
 from simple_locations.lib.autocomplete_admin import FkAutocompleteAdmin
 from simple_locations.models import Point, AreaType, Area, Facility, FacilityType
