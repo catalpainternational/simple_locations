@@ -2,22 +2,13 @@
 # encoding=utf-8
 # vim: ai ts=4 sts=4 et sw=4
 
-import uuid
 
 from django.db import models
 from django.utils.translation import ugettext as _, ugettext_lazy as __
 # from code_generator.fields import CodeField # removed so that we can use
 # South
-import mptt
 from mptt.models import MPTTModel
 from mptt.managers import TreeManager
-
-
-try:
-    from mptt.models import MPTTModel
-except ImportError:
-    # django-mptt < 0.4
-    MPTTModel = models.Model
 
 
 class Point(models.Model):
@@ -25,6 +16,7 @@ class Point(models.Model):
     class Meta:
         verbose_name = __("Point")
         verbose_name_plural = __("Points")
+        app_label = 'simple_locations'
 
     latitude = models.DecimalField(max_digits=13, decimal_places=10)
     longitude = models.DecimalField(max_digits=13, decimal_places=10)
@@ -39,6 +31,7 @@ class AreaType(models.Model):
     class Meta:
         verbose_name = __("Area Type")
         verbose_name_plural = __("Area Types")
+        app_label = 'simple_locations'
 
     name = models.CharField(max_length=100)
     slug = models.CharField(max_length=30, unique=True)
@@ -48,13 +41,14 @@ class AreaType(models.Model):
 
 
 class Area(MPTTModel):
-    #added to squash mptt deprecatino of .tree warning
+    # added to squash mptt deprecatino of .tree warning
     objects = tree = TreeManager()
 
     class Meta:
         unique_together = ('code', 'kind')
         verbose_name = __("Area")
         verbose_name_plural = __("Areas")
+        app_label = 'simple_locations'
 
     class MPTTMeta:
         parent_attr = 'parent'
@@ -124,6 +118,7 @@ class FacilityType(models.Model):
     class Meta:
         verbose_name = __("Facility Type")
         verbose_name_plural = __("Facility Types")
+        app_label = 'simple_locations'
 
     def __unicode__(self):
         return self.name
@@ -146,6 +141,7 @@ class Facility(models.Model):
     class Meta:
         verbose_name = __("Facility")
         verbose_name_plural = __("Facilities")
+        app_label = 'simple_locations'
 
     def __unicode__(self):
         return u"%s %s" % (self.type, self.name)
@@ -157,8 +153,6 @@ class Facility(models.Model):
             return False
 
     def get_children(self):
-        #import pdb; pdb.set_trace()
-
         children = self._default_manager.filter(parent=self)
         return children
 
