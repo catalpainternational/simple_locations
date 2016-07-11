@@ -129,14 +129,11 @@ class Facility(models.Model):
     code = models.CharField(max_length=64, blank=True, null=False)
     type = models.ForeignKey(FacilityType, blank=True, null=True)
 
-    catchment_areas = models.ManyToManyField(
-        Area, null=True, blank=True, related_name='catchment')
+    catchment_areas = models.ManyToManyField(Area, related_name='catchment')
     location = models.ForeignKey(Point, null=True, blank=True)
-    area = models.ForeignKey(
-        Area, null=True, blank=True, related_name='facility',)
+    area = models.ForeignKey(Area, null=True, blank=True, related_name='facility')
 
-    parent = models.ForeignKey(
-        'self', null=True, blank=True, related_name='facility')
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='facility')
 
     class Meta:
         verbose_name = __("Facility")
