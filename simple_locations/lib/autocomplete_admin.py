@@ -2,8 +2,8 @@
 #	 Autocomplete feature for admin panel
 #
 #	 Most of the code has been written by Jannis Leidel, then updated a bit
-#	 for django_extensions, finally reassembled and extended by Mikele Pasin. 
-# 
+#	 for django_extensions, finally reassembled and extended by Mikele Pasin.
+#
 #	 http://jannisleidel.com/2008/11/autocomplete-form-widget-foreignkey-model-fields/
 #    http://code.google.com/p/django-command-extensions/
 #    http://magicrebirth.wordpress.com/
@@ -25,7 +25,7 @@
 
 # 3.Add the 'admin/autocomplete' folder to your templates folder
 
-# 4.Add the extrafilters.py file in the templatetags directory of your application (or just add its contents to 
+# 4.Add the extrafilters.py file in the templatetags directory of your application (or just add its contents to
 #   your custom template tags if you already have some).
 #  All is needed is the 'cut' filter, for making the code used in the inline-autocomplete form javascript friendly
 
@@ -43,7 +43,7 @@
 # TROUBLE SHOOTING:
 #  ==============
 
-# ** sometimes things don't work cause you have to add 'from django.conf.urls.defaults import *' to the modules where you use the autocomplete 
+# ** sometimes things don't work cause you have to add 'from django.conf.urls.defaults import *' to the modules where you use the autocomplete
 # ** if you're using the inline-autocompletion, make sure that the main admin class the inline belong to is a subclass FkAutocompleteAdmin
 # ** you may need to hack it a bit to make it work for you - it's been done in a rush!
 
@@ -66,7 +66,7 @@ from django.db.models.query import QuerySet
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
 from django.utils.text import get_text_list
-from django.conf.urls import patterns
+from django.conf.urls import url
 try:
     from django.utils.text import truncate_words
 except ImportError:
@@ -83,7 +83,7 @@ except ImportError:
 
 class FkSearchInput(ForeignKeyRawIdWidget):
     """
-    A Widget for displaying ForeignKeys in an autocomplete search input 
+    A Widget for displaying ForeignKeys in an autocomplete search input
     instead in a <select> box.
     """
 
@@ -161,7 +161,7 @@ class FkSearchInput(ForeignKeyRawIdWidget):
 
 class NoLookupsForeignKeySearchInput(ForeignKeyRawIdWidget):
     """
-    A Widget for displaying ForeignKeys in an autocomplete search input 
+    A Widget for displaying ForeignKeys in an autocomplete search input
     instead in a <select> box.
     """
 
@@ -237,7 +237,7 @@ class NoLookupsForeignKeySearchInput(ForeignKeyRawIdWidget):
 
 class InlineSearchInput(ForeignKeyRawIdWidget):
     """
-    A Widget for displaying ForeignKeys in an autocomplete search input 
+    A Widget for displaying ForeignKeys in an autocomplete search input
     instead in a <select> box.
     """
 
@@ -327,7 +327,7 @@ class InlineSearchInput(ForeignKeyRawIdWidget):
 
 
 class FkAutocompleteAdmin(admin.ModelAdmin):
-    """ 
+    """
     Admin class for models using the autocomplete feature.
 
     There are two additional fields:
@@ -358,14 +358,14 @@ class FkAutocompleteAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super(FkAutocompleteAdmin,self).get_urls()
-        search_url = patterns('',
-            (r'^foreignkey_autocomplete/$', self.admin_site.admin_view(self.foreignkey_autocomplete))
-        )
+        search_url = [
+            url(r'^foreignkey_autocomplete/$', self.admin_site.admin_view(self.foreignkey_autocomplete))
+        ]
         return search_url + urls
 
     def foreignkey_autocomplete(self, request):
         """
-        Searches in the fields of the given related model and returns the 
+        Searches in the fields of the given related model and returns the
         result as a simple string to be used by the jQuery Autocomplete plugin
         """
         query = request.GET.get('q', None)
@@ -431,7 +431,7 @@ class FkAutocompleteAdmin(admin.ModelAdmin):
         Overrides the default widget for Foreignkey fields if they are
         specified in the related_search_fields class attribute.
         """
-        if (isinstance(db_field, models.ForeignKey) and 
+        if (isinstance(db_field, models.ForeignKey) and
             db_field.name in self.related_search_fields):
             model_name = db_field.rel.to._meta.object_name
 #			help_text = self.get_help_text(db_field.name, model_name)
@@ -455,7 +455,7 @@ class FkAutocompleteAdmin(admin.ModelAdmin):
 
 
 class NoLookupsForeignKeyAutocompleteAdmin(admin.ModelAdmin):
-    """ 
+    """
         In certain cases you do not want to have the usual raw_id lenses for related items lookup.
         Code mostly as above, changes only the template that renders it.
     """
@@ -472,14 +472,14 @@ class NoLookupsForeignKeyAutocompleteAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urls = super(NoLookupsForeignKeyAutocompleteAdmin,self).get_urls()
-        search_url = patterns('',
-            (r'^foreignkey_autocomplete/$', self.admin_site.admin_view(self.foreignkey_autocomplete))
-        )
+        search_url = [
+            url(r'^foreignkey_autocomplete/$', self.admin_site.admin_view(self.foreignkey_autocomplete))
+        ]
         return search_url + urls
 
     def foreignkey_autocomplete(self, request):
         """
-        Searches in the fields of the given related model and returns the 
+        Searches in the fields of the given related model and returns the
         result as a simple string to be used by the jQuery Autocomplete plugin
         """
         query = request.GET.get('q', None)
@@ -545,7 +545,7 @@ class NoLookupsForeignKeyAutocompleteAdmin(admin.ModelAdmin):
         Overrides the default widget for Foreignkey fields if they are
         specified in the related_search_fields class attribute.
         """
-        if (isinstance(db_field, models.ForeignKey) and 
+        if (isinstance(db_field, models.ForeignKey) and
             db_field.name in self.related_search_fields):
             model_name = db_field.rel.to._meta.object_name
             help_text = self.get_help_text(db_field.name, model_name)
@@ -569,12 +569,12 @@ class NoLookupsForeignKeyAutocompleteAdmin(admin.ModelAdmin):
 #  ======================================
 
 class InlineAutocompleteAdmin(admin.TabularInline):
-    """ 
+    """
     Admin class for models using the autocomplete feature in inlines.
 
     At the moment, this autocomplete works only if the admin of the model including the inline-admin is
     itself a subclass of an autocomplete Admin (e.g., ForeignKeyAutocompleteAdmin)
-    
+
     """
 
     related_search_fields = {}
@@ -596,7 +596,7 @@ class InlineAutocompleteAdmin(admin.TabularInline):
 
     def foreignkey_autocomplete(self, request):
         """
-        Searches in the fields of the given related model and returns the 
+        Searches in the fields of the given related model and returns the
         result as a simple string to be used by the jQuery Autocomplete plugin
         """
         query = request.GET.get('q', None)
@@ -662,7 +662,7 @@ class InlineAutocompleteAdmin(admin.TabularInline):
         Overrides the default widget for Foreignkey fields if they are
         specified in the related_search_fields class attribute.
         """
-        if (isinstance(db_field, models.ForeignKey) and 
+        if (isinstance(db_field, models.ForeignKey) and
             db_field.name in self.related_search_fields):
             model_name = db_field.rel.to._meta.object_name
             help_text = self.get_help_text(db_field.name, model_name)
@@ -679,8 +679,8 @@ class InlineAutocompleteAdmin(admin.TabularInline):
 
 
 #  ===========
-# using the autocomplete admin with other custom admin classes: 
-# just mix and match as you like.... 
+# using the autocomplete admin with other custom admin classes:
+# just mix and match as you like....
 #  e.g. in my case I used it with the admin for trees provided by FeinCms:
 
 try:
