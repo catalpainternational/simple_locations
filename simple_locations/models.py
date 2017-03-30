@@ -3,6 +3,7 @@
 # vim: ai ts=4 sts=4 et sw=4
 
 
+from django.contrib.gis.db.models import MultiPolygonField
 from django.db import models
 from django.utils.translation import ugettext as _, ugettext_lazy as __
 # from code_generator.fields import CodeField # removed so that we can use
@@ -58,6 +59,7 @@ class Area(MPTTModel):
     code = models.CharField(max_length=50,)  # was CodeField
     kind = models.ForeignKey('AreaType', blank=True, null=True)
     location = models.ForeignKey(Point, blank=True, null=True)
+    geom = MultiPolygonField(srid=4326, null=True)
     parent = models.ForeignKey('self', blank=True, null=True,
                                related_name='children')
 
