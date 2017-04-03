@@ -6,7 +6,10 @@ from django.core.management import call_command
 
 
 def load_initial_data(apps, schema_editor):
-    call_command('loaddata', 'initial_data', app_label='simple_locations')
+    # this migration used to load the initial data, we do not want this anymore, but are leaving it here
+    # to preserve migration history
+    # call_command('loaddata', 'initial_data', app_label='simple_locations')
+    pass
 
 
 class Migration(migrations.Migration):
