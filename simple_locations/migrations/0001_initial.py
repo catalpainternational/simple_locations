@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=100)),
                 ('code', models.CharField(max_length=64, blank=True)),
-                ('area', models.ForeignKey(related_name='facility', blank=True, to='simple_locations.Area', null=True)),
+                ('area', models.ForeignKey(related_name='facility', blank=True, to='simple_locations.Area', null=True, on_delete=models.CASCADE)),
                 ('catchment_areas', models.ManyToManyField(related_name='catchment', to='simple_locations.Area')),
             ],
             options={
@@ -79,32 +79,32 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='facility',
             name='location',
-            field=models.ForeignKey(blank=True, to='simple_locations.Point', null=True),
+            field=models.ForeignKey(blank=True, to='simple_locations.Point', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='facility',
             name='parent',
-            field=models.ForeignKey(related_name='facility', blank=True, to='simple_locations.Facility', null=True),
+            field=models.ForeignKey(related_name='facility', blank=True, to='simple_locations.Facility', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='facility',
             name='type',
-            field=models.ForeignKey(blank=True, to='simple_locations.FacilityType', null=True),
+            field=models.ForeignKey(blank=True, to='simple_locations.FacilityType', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='area',
             name='kind',
-            field=models.ForeignKey(blank=True, to='simple_locations.AreaType', null=True),
+            field=models.ForeignKey(blank=True, to='simple_locations.AreaType', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='area',
             name='location',
-            field=models.ForeignKey(blank=True, to='simple_locations.Point', null=True),
+            field=models.ForeignKey(blank=True, to='simple_locations.Point', null=True, on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='area',
             name='parent',
-            field=models.ForeignKey(related_name='children', blank=True, to='simple_locations.Area', null=True),
+            field=models.ForeignKey(related_name='children', blank=True, to='simple_locations.Area', null=True, on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='area',

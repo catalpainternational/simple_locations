@@ -61,11 +61,10 @@ class Area(MPTTModel):
 
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=50,)  # was CodeField
-    kind = models.ForeignKey('AreaType', blank=True, null=True)
-    location = models.ForeignKey(Point, blank=True, null=True)
+    kind = models.ForeignKey('AreaType', blank=True, null=True, on_delete=models.CASCADE)
+    location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
     geom = MultiPolygonField(srid=4326, null=True)
-    parent = models.ForeignKey('self', blank=True, null=True,
-                               related_name='children')
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='children', on_delete=models.CASCADE)
 
     def delete(self):
         super(Area, self).delete()
