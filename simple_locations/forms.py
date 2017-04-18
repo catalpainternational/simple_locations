@@ -10,7 +10,7 @@ from django.forms.widgets import Widget, Select
 from simple_locations.models import Area,AreaType
 from django.conf import settings
 from mptt.forms import TreeNodeChoiceField
-from django.forms.util import ErrorList
+from django.forms.utils import ErrorList
 from code_generator.code_generator import generate_tracking_tag
 
 class LocationForm(forms.Form):
