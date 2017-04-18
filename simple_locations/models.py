@@ -99,6 +99,66 @@ class Area(MPTTModel):
                     'parent': self.parent.display_name_and_type()
                 }
 
+    @property
+    def bounds(self):
+        """
+        Return bounds in the format which Leaflet can use to set to bounds.
+        st_extent returns bounds in format (xmin, ymin, xmax, ymax)
+        where leaflet requires [[xmin, ymin ], [xmax, ymax ]]
+        :return:
+        """
+        bounds = self.geom.extent
+        return [[bounds[1], bounds[0]], [bounds[3],bounds[2]]]
+
+
+    @classmethod
+    def geojson(cls, area_id, children=False):
+
+        if children:
+            return cls.geojson_children(area_id)
+
+        node = cls.objects.raw('''
+         SELECT id, json_build_object(
+          'type', 'FeatureCollection',
+          'features', json_agg((
+            SELECT
+              json_build_object(
+                'type', 'Feature',
+                'id', id,
+                'geometry', ST_AsGeoJSON(geom, 5)::json,
+                'properties', json_build_object('name', name, 'code', code, 'parent', parent_id)
+                )
+            ))
+          )
+            FROM simple_locations_area
+            WHERE id=%s
+            GROUP BY id''', [area_id])
+
+        return node[0].json_build_object
+
+    @classmethod
+    def geojson_children(cls, area_id):
+        node = cls.objects.raw('''
+         SELECT parent_id AS id, json_build_object(
+          'type', 'FeatureCollection',
+          'features', json_agg((
+            SELECT
+              json_build_object(
+
+                'id', id,
+                'type', 'Feature',
+                'geometry', ST_AsGeoJSON(geom, 4)::json,
+                'properties', json_build_object('name', name, 'code', code, 'parent', parent_id)
+                )
+            ))
+          )
+            FROM simple_locations_area
+            WHERE parent_id=%s
+            GROUP BY parent_id''', [area_id])
+
+        return node[0].json_build_object
+
+
     def __str__(self):
         ''' print Area name from its Kind and parent
 
