@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='simple_locations',
-    version='2.3',
+    version='2.5',
     license="BSD",
 
     description="The common location package used for catalpa's projects.",
