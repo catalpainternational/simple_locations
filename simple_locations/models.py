@@ -46,8 +46,6 @@ class AreaType(models.Model):
 
 @python_2_unicode_compatible
 class Area(MPTTModel):
-    # added to squash mptt deprecatino of .tree warning
-    tree = TreeManager()
 
     class Meta:
         unique_together = ('code', 'kind')
