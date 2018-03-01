@@ -10,7 +10,6 @@ from django.utils.encoding import python_2_unicode_compatible
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
-from mptt.managers import TreeManager
 
 
 @python_2_unicode_compatible
