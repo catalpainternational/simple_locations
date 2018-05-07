@@ -10,7 +10,6 @@ from django.utils.encoding import python_2_unicode_compatible
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
-from mptt.managers import TreeManager
 
 
 @python_2_unicode_compatible
@@ -46,8 +45,6 @@ class AreaType(models.Model):
 
 @python_2_unicode_compatible
 class Area(MPTTModel):
-    # added to squash mptt deprecatino of .tree warning
-    tree = TreeManager()
 
     class Meta:
         unique_together = ('code', 'kind')
