@@ -1,8 +1,8 @@
-##simple_locations
+## simple_locations
 
 The common location package used for catalpa's projects. A hierarchical tree of geographical locations supporting location type and GIS data
 
-####Changelog
+#### Changelog
 
   * Version 2.7.2
     - optionally use django_extensions' ForeignKeyAutocompleteAdmin in admin interface
