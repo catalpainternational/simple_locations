@@ -4,10 +4,11 @@ The common location package used for catalpa's projects. A hierarchical tree of 
 
 #### Changelog
 
-  * Version 2.7.2
+  * Version 2.72
     - optionally use django_extensions' ForeignKeyAutocompleteAdmin in admin interface
 
-#### Uploading a new version to PyPi
+
+##### Uploading a new version to PyPi
 
 * install setuptools and twine
 * Bump `setup.py` to a new version
