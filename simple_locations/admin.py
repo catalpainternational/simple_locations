@@ -28,7 +28,7 @@ class AreaTypeAdmin(admin.ModelAdmin):
     list_display = ('slug', 'name')
 
 
-class AreadChildrenInline(admin.TabularInline):
+class AreaChildrenInline(admin.TabularInline):
     model = Area
     fields = ['name', 'code', 'kind']
     show_change_link = True
@@ -41,13 +41,14 @@ class AreaAdmin(MPTTModelAutocompleteAdmin, admin.OSMGeoAdmin):
     default_lon = -8.8742
     default_lat = 125.7275
     default_zoom = 16
+    map_template = "simple_locations/admin/osm.html"
     # debug = True  - enable if copy/pasting WKTs is useful
     units = 'km'
     list_display = ('name', 'kind', 'location', 'code')
     search_fields = ['code', 'name']
     list_filter = ('kind',)
     related_search_fields = {'parent': ('^name',)}
-    inlines = [AreadChildrenInline]
+    inlines = [AreaChildrenInline]
 
 
 admin.site.register(Point, PointAdmin)
