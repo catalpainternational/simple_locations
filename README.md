@@ -4,6 +4,10 @@ The common location package used for catalpa's projects. A hierarchical tree of 
 
 #### Changelog
 
+  * Version 2.74
+    - fix CORS issue breaking maps in AreaAdmin
+    - typo in AreaChildrenInline
+
   * Version 2.73
     - add an inline showing children to the Area admin
     - make the `geom` field optional
