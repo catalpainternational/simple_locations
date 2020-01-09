@@ -4,6 +4,9 @@ The common location package used for catalpa's projects. A hierarchical tree of 
 
 #### Changelog
 
+  * Version 2.73
+    - add modeltranslations
+
   * Version 2.72
     - optionally use django_extensions' ForeignKeyAutocompleteAdmin in admin interface
 

@@ -10,7 +10,7 @@ from django.utils.encoding import python_2_unicode_compatible
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
-
+from translations.models import Translatable
 
 @python_2_unicode_compatible
 class Point(models.Model):
@@ -44,13 +44,16 @@ class AreaType(models.Model):
 
 
 @python_2_unicode_compatible
-class Area(MPTTModel):
+class Area(MPTTModel, Translatable):
 
     class Meta:
         unique_together = ('code', 'kind')
         verbose_name = __("Area")
         verbose_name_plural = __("Areas")
         app_label = 'simple_locations'
+
+    class TranslatableMeta:
+        fields = ['name']
 
     class MPTTMeta:
         parent_attr = 'parent'

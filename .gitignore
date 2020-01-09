@@ -3,3 +3,4 @@
 .python-version
 .eggs/
 *.egg-info/
+*.vscode/
