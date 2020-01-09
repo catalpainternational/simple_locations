@@ -3,13 +3,13 @@ from setuptools import setup, find_packages
 
 setup(
     name='simple_locations',
-    version='2.73',
+    version='2.75',
     license="BSD",
 
     description="The common location package used for catalpa's projects.",
     long_description=open('README.md').read(),
     author='Anders Hofstee, Nicoas Hoibian',
-    author_email='a.hofstee@catalpainternational.org',
+    author_email='engineering@catalpa.io',
     url='https://github.com/catalpainternational/simple_locations',
 
     packages=find_packages(),
