@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=['django-mptt==0.10.0', 'django-modeltranslation==0.14.1'],
+    install_requires=['django-mptt>=0.9.0'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

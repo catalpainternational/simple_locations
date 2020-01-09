@@ -5,26 +5,17 @@
 from django.conf import settings
 from django.contrib.gis import admin
 from django import forms
+from mptt.admin import MPTTModelAdmin
+area_admin_classes = [admin.OSMGeoAdmin, MPTTModelAdmin]
 
-area_admin_classes = []
-
-try:
-    from django.contrib.gis import OSGeoAdmin
-    area_admin_classes.append(OSGeoAdmin)
-except ImportError:
-    pass
-
-try:
-    from mptt.admin import MPTTModelAdmin
-    area_admin_classes.append(MPTTModelAdmin)
-except ImportError:
-    pass
-
+# Translated models are "nice to have"
 try:
     from modeltranslation.admin import TranslationAdmin
     area_admin_classes.append(TranslationAdmin)
+    area_type_admin = TranslationAdmin
 except ImportError:
     TranslationAdmin = admin.ModelAdmin
+    pass
 
 from simple_locations.models import Point, AreaType, Area
 
