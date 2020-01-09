@@ -4,7 +4,6 @@
 
 from django.conf import settings
 from django.contrib.gis import admin
-from django import forms
 from mptt.admin import MPTTModelAdmin
 area_admin_classes = [admin.OSMGeoAdmin, MPTTModelAdmin]
 
