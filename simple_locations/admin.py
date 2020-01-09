@@ -6,8 +6,25 @@ from django.conf import settings
 from django.contrib.gis import admin
 from django import forms
 
-from mptt.admin import MPTTModelAdmin
-from modeltranslation.admin import TranslationAdmin
+area_admin_classes = []
+
+try:
+    from django.contrib.gis import OSGeoAdmin
+    area_admin_classes.append(OSGeoAdmin)
+except ImportError:
+    pass
+
+try:
+    from mptt.admin import MPTTModelAdmin
+    area_admin_classes.append(MPTTModelAdmin)
+except ImportError:
+    pass
+
+try:
+    from modeltranslation.admin import TranslationAdmin
+    area_admin_classes.append(TranslationAdmin)
+except ImportError:
+    TranslationAdmin = admin.ModelAdmin
 
 from simple_locations.models import Point, AreaType, Area
 
@@ -27,7 +44,7 @@ class AreaChildrenInline(admin.TabularInline):
     extra = 0
 
 
-class AreaAdmin(TranslationAdmin, MPTTModelAdmin, admin.OSMGeoAdmin):
+class AreaAdmin(*area_admin_classes):
     default_lon = getattr(settings, 'GIS_DEFAULT_LAT', -8.8742)
     default_lat = getattr(settings, 'GIS_DEFAULT_LON', 125.7275)
     default_zoom = 16
