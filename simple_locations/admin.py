@@ -27,7 +27,7 @@ class AreaChildrenInline(admin.TabularInline):
     extra = 0
 
 
-class AreaAdmin(TranslationAdmin, MPTTModelAutocompleteAdmin, admin.OSMGeoAdmin):
+class AreaAdmin(TranslationAdmin, MPTTModelAdmin, admin.OSMGeoAdmin):
     default_lon = getattr(settings, 'GIS_DEFAULT_LAT', -8.8742)
     default_lat = getattr(settings, 'GIS_DEFAULT_LON', 125.7275)
     default_zoom = 16
@@ -35,8 +35,6 @@ class AreaAdmin(TranslationAdmin, MPTTModelAutocompleteAdmin, admin.OSMGeoAdmin)
     # debug = True  - enable if copy/pasting WKTs is useful
     units = 'km'
     list_display = ('name', 'kind', 'location', 'code')
-
-class AreaAdmin(TranslationAdmin, MPTTModelAdmin):
     search_fields = ['code', 'name']
     list_filter = ('kind',)
     related_search_fields = {'parent': ('^name',)}
