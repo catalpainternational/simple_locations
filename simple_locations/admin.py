@@ -22,8 +22,8 @@ try:
     # optionally use django_extensions' ForeignKeyAutocompleteAdmin if 
     # available
     from django_extensions.admin import ForeignKeyAutocompleteAdmin
-except ImportError:
     area_admin_classes.append(ForeignKeyAutocompleteAdmin)
+except ImportError:
     ForeignKeyAutocompleteAdmin = None
     pass
 
