@@ -1,6 +1,12 @@
 ## simple_locations
 
-The common location package used for catalpa's projects. A hierarchical tree of geographical locations supporting location type and GIS data
+The common location package used for catalpa's projects. A hierarchical tree of geographical locations supporting location type and GIS data.
+
+## Admin
+
+The admin site is set up to use Modeltranslations (if available in the parent app) and a foreign key lookup tool from django-extensions, again, if available in the parent app.
+
+For modeltranslations, please remember to run `sync_translation_fields` in order to get `name_en`, `name_tet` etc. fields.
 
 #### Changelog
 
