@@ -3,3 +3,7 @@
 .python-version
 .eggs/
 *.egg-info/
+*.vscode/
+build/
+*.egg
+.pytest_cache/
