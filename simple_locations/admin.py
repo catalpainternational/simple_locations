@@ -18,14 +18,15 @@ except ImportError:
     TranslationAdmin = admin.ModelAdmin
     pass
 
-try:
-    # optionally use django_extensions' ForeignKeyAutocompleteAdmin if 
-    # available
-    from django_extensions.admin import ForeignKeyAutocompleteAdmin
-    area_admin_classes.append(ForeignKeyAutocompleteAdmin)
-except ImportError:
-    ForeignKeyAutocompleteAdmin = None
-    pass
+# Disable this one because its signature does not play nicely with others. See modeltranslations issue 510
+# try:
+#     # optionally use django_extensions' ForeignKeyAutocompleteAdmin if 
+#     # available
+#     from django_extensions.admin import ForeignKeyAutocompleteAdmin
+#     area_admin_classes.append(ForeignKeyAutocompleteAdmin)
+# except ImportError:
+#     ForeignKeyAutocompleteAdmin = None
+#     pass
 
 
 class PointAdmin(admin.ModelAdmin):
