@@ -1,9 +1,3 @@
-.DS_Store
-*.pyc
-.python-version
-.eggs/
-*.egg-info/
-*.vscode/
-build/
-*.egg
-.pytest_cache/
+dist
+env
+simple_locations.egg-info
