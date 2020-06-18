@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from simple_locations.models import Area,Point,AreaType
 from django.db import IntegrityError
-from forms import LocationForm
+from .forms import LocationForm
 from django.http import HttpResponseRedirect
 from mptt.exceptions import InvalidMove
 from django.views.decorators.cache import cache_control
