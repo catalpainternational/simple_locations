@@ -1,57 +1,110 @@
-from django.core.management.base import BaseCommand
-from simple_locations.models import Area, AreaType
-import zipfile
-import shapefile
+import os
+import shutil
 import tempfile
 import urllib
-import shutil
+import zipfile
 from pathlib import Path
-import os
+
 from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
+from django.core.management.base import BaseCommand
+
+from django.db import IntegrityError
+
+from typing import Any
+
+from simple_locations.models import Area, AreaType
+
+area_definition_set = {
+    "png_llg_boundaries_2011census_region.shp": {
+        "areatype": "llg",
+        "name": "LLGNAME",
+        "code": "GEOCODE",
+    },
+    "png_dist_boundaries_2011census_region.shp": {
+        "areatype": "district",
+        "name": "DISTNAME",
+        "code": "GEOCODE",
+    },
+    "png_prov_boundaries_2011census_region.shp": {
+        "areatype": "province",
+        "name": "PROVNAME",
+        "code": "PROVID",
+    },
+}
+
 
 class Command(BaseCommand):
 
     help = """Import data from NSO PNG Boundaries zip file"""
 
-    def handle(self, **options):
-        
-        url = 'https://png-data.sprep.org/system/files/NSO_PNG%20Boundaries.zip'
-        database_srid = 4326  # Corresponding to 'Area' srid
+    def handle(self, *args: Any, **options: Any):
+        self.import_zip()
+        # self.import_directory('/home/josh/Downloads/NSO_PNG Boundaries')
 
-        with urllib.request.urlopen(url) as response:
-            with tempfile.NamedTemporaryFile() as tmp_file:
-                shutil.copyfileobj(response, tmp_file)
+    def import_zip(
+        self,
+        zip_url: str = "https://png-data.sprep.org/system/files/NSO_PNG%20Boundaries.zip",
+    ):
 
-                with zipfile.ZipFile(tmp_file) as tmpzip:
-                    with tempfile.TemporaryDirectory() as tmpdirname:
-                        tmpzip.extractall(tmpdirname)
+        with urllib.request.urlopen(
+            zip_url
+        ) as response, tempfile.NamedTemporaryFile() as tmp_file:
+            shutil.copyfileobj(response, tmp_file)
+            with zipfile.ZipFile(tmp_file) as tmpzip:
+                with tempfile.TemporaryDirectory() as tmpdirname:
+                    tmpzip.extractall(tmpdirname)
+                    self.import_directory(tmpdirname)
+    
+    def import_directory(self, tmpdirname: str):
+      for filename in [
+            f for f in os.listdir(tmpdirname) if f.endswith(".shp")
+        ]:
+                        
+        area_definition = area_definition_set[filename]
+        area_type = AreaType.objects.get_or_create(
+            name=area_definition["areatype"],
+            slug=area_definition["areatype"],
+        )[0]  # type: AreaType
+        self.import_shp(
+            shape_path=Path(tmpdirname) / filename,
+            area_type=area_type,
+            field_mapping=area_definition,
+        )
 
-                        # Mapping the file names to area types
-                        # Maybe get a KeyError
-                        area_definition = {
-                            "png_llg_boundaries_2011census_region.shp": [{"areatype": "llg", "name": "LLGNAME", "code": "GEOCODE"}],
-                            "png_dist_boundaries_2011census_region.shp": [{"areatype": "district", "name": "DISTNAME", "code": "GEOCODE"}],
-                            "png_prov_boundaries_2011census_region.shp": [{"areatype": "province", "name": "PROVNAME", "code": "PROVID"}]
-                        }
+    def import_shp(self, shape_path: Path, area_type: AreaType, field_mapping: dict) -> None:
 
-                        for filename in os.listdir(tmpdirname):
-                            if not filename.endswith('.shp'):
-                                continue
+        for feature in DataSource(str(shape_path))[0]:
+            self.import_feature(
+                feature=feature, area_type=area_type, field_mapping=field_mapping
+            )
 
-                            areatype = area_definition[filename]
-                            shp_path = str(Path(tmpdirname) / filename)
+    def import_feature(
+        self,
+        feature,
+        area_type: AreaType,
+        field_mapping: dict,
+        database_srid: int = 4326,
+    ):
+        # Transform the geometry to a MultiPolygon if it is a Single Polygon
+        # This is because a Shapefile may contain a data type which we don't cover (like a Polygon)
+        geom = feature.geom.geos if isinstance(feature.geom.geos, MultiPolygon) else MultiPolygon(feature.geom.geos)
+        code = str(feature.get(field_mapping["code"]))
+        geometry_srid = feature.geom.srid
 
-                            for feature in Datasource(shp_path)[0]:
-                                geom = MultiPolygon(feature.geom.geos)
+        # Transform the geometry if required
+        # to suit the database SRID
+        asset_geometry = GEOSGeometry(geom, srid=geometry_srid)
+        if geometry_srid != database_srid:
+            asset_geometry.transform(database_srid)
 
-                                asset_geometry = GEOSGeometry(geom, srid=feature.geom.srid)
-                                if feature.geom.srid != database_srid:
-                                    asset_geometry.transform(database_srid)
-
-                                areatype = AreaType.objects.get_or_create(name=area_definition['areatype'], slug=area_definition['areatype'])[0]
-                                Area.objects.create (
-                                    name = feature.get(areatype['name']),
-                                    code = feature.get(areatype['code']),
-                                    kind = areatype,
-                                    geom = asset_geometry
-                                )
+        try:
+            area = Area.objects.create(
+                name=feature.get(field_mapping["name"]),
+                code=code,
+                kind=area_type,
+                geom=asset_geometry,
+            )
+            return area
+        except IntegrityError as E:
+            self.stderr.write(self.style.ERROR(f'Error writing code {code}: {E}'[:140]+'...' ))
