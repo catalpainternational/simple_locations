@@ -41,6 +41,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any):
         self.import_zip()
         # self.import_directory('/home/josh/Downloads/NSO_PNG Boundaries')
+        self.rebuild_tree()
 
     def import_zip(
         self,
@@ -108,3 +109,13 @@ class Command(BaseCommand):
             return area
         except IntegrityError as E:
             self.stderr.write(self.style.ERROR(f'Error writing code {code}: {E}'[:140]+'...' ))
+
+    def rebuild_tree(self):
+        for a in Area.objects.all():
+            try:
+                a.parent = Area.objects.get(code = a.code[:-2])
+                a.save()
+            except:
+                pass
+
+        Area.objects.rebuild()
