@@ -3,3 +3,4 @@ env
 simple_locations.egg-info
 
 .vscode/
+*.pyc
