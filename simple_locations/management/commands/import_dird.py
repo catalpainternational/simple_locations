@@ -44,8 +44,8 @@ class Command(BaseCommand):
     help = """Import data from NSO PNG Boundaries zip file"""
 
     def handle(self, *args: Any, **options: Any):
-        # self.import_zip()
-        self.import_directory('/home/josh/Downloads/NSO_PNG Boundaries')
+        self.import_zip()
+        # self.import_directory('/home/josh/Downloads/NSO_PNG Boundaries')
         self.rebuild_tree()
         self.perform_rename()
 
