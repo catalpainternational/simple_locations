@@ -10,6 +10,15 @@ from django.utils.translation import ugettext as _, ugettext_lazy as __
 # South
 from mptt.models import MPTTModel
 
+
+class DateStampedModel(models.Model):
+    date_created = models.DateField(verbose_name=_('Date Created'), auto_now_add=True, null=True, blank=True)
+    date_modified = models.DateField(verbose_name=_('Last Modified'), null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
 class Point(models.Model):
 
     class Meta:
@@ -103,3 +112,53 @@ class Area(MPTTModel):
         #                                              'area': self.name,}
 
         return self.name
+
+
+class AreaProfile(DateStampedModel):
+    area = models.OneToOneField('Area', on_delete=models.CASCADE, primary_key=True)
+    description = models.TextField()
+
+class IndicatorMeasureSchema(models.Model):
+    """
+    Declare the "shape" of the data to be displayed.
+    See :
+    https://pypi.org/project/jsonschema/
+    https://json-schema.org/
+    """
+    schema = models.TextField()
+
+class AreaIndicator(DateStampedModel):
+    """
+    Initially required for PNG DIMS
+    """
+
+    class IndicatorMeasureChoice(models.TextChoices):
+        """
+        Derived from the IATI standard, this determines the "type" of 
+        data which is being measured - is it percentage, count, or on some sort of scale?
+        """
+        UNIT = 'U', _('Units')
+        PERCENTAGE = 'P', _('Percentages')
+        NOMINAL = 'N', _('Nominal')
+        ORDINAL = 'O', _('Ordinal')
+        QUALITATIVE = 'Q', _('Qualitative')
+
+    area = models.ForeignKey('Area', on_delete=models.CASCADE)
+    name = models.TextField()
+    
+    measure = models.CharField(
+        max_length=2,
+        choices=IndicatorMeasureChoice.choices,
+        default=IndicatorMeasureChoice.UNIT,
+        help_text=_("Define the unit of measure in which the value is reported.")
+    )
+
+    # In order to permit for instance a time-series-keyed mesaurement,
+    # this is a JSON field rather than a text field
+    value = models.JSONField()
+
+    # Define parameters for the measurement.
+    # For example: {Gender: "Male", age_range: [0,16], is_smoker: no}
+    dimensions = models.JSONField(
+        help_text=_("A category used for disaggregating the result by gender, age, etc.")
+    )
