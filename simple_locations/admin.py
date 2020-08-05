@@ -5,7 +5,7 @@
 from django.conf import settings
 from django.contrib.gis import admin
 from mptt.admin import MPTTModelAdmin
-from simple_locations.models import Point, AreaType, Area
+from simple_locations.models import Point, AreaType, Area, AreaIndicator
 
 area_admin_classes = [admin.OSMGeoAdmin, MPTTModelAdmin]
 
@@ -67,3 +67,4 @@ AreaAdminClass = type(
 admin.site.register(Point, PointAdmin)
 admin.site.register(AreaType, AreaTypeAdmin)
 admin.site.register(Area, AreaAdminClass)
+admin.site.register(AreaIndicator)
