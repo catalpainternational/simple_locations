@@ -9,6 +9,7 @@ from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.core.management.base import BaseCommand
 
+from django.contrib.gis.db.models import Union
 from django.db import IntegrityError
 
 from typing import Any, NamedTuple, List
@@ -46,6 +47,7 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any):
         self.import_zip()
         # self.import_directory('/home/josh/Downloads/NSO_PNG Boundaries')
+        self.merge_districts()
         self.rebuild_tree()
         self.perform_rename()
 
@@ -119,11 +121,25 @@ class Command(BaseCommand):
         except IntegrityError as E:
             self.stderr.write(self.style.ERROR(f'Error writing code {code}: {E}'[:140]+'...' ))
 
+    def merge_districts(self):
+        '''
+        As we do not have a unified "Country" shape, merge the Districts to create the top level
+        '''
+        self.stderr.write(self.style.SUCCESS('Merge districts'))
+        country_level_area = Area.objects.get_or_create(
+            kind = AreaType.objects.get_or_create(name='country', slug='country')[0],
+            geom = Area.objects.filter(kind__name='district').aggregate(Union('geom'))['geom__union'],  # Multipolygon object
+            name = 'Papua New Guinea',
+        )[0]
+
+        for d in Area.objects.filter(kind__name='district'):
+            d.parent = country_level_area
+            d.save()
+
     def rebuild_tree(self):
 
-        
         self.stderr.write(self.style.SUCCESS('Reset Area parent code'))
-        for a in Area.objects.all():
+        for a in Area.objects.exclude(kind__name__in=['country', 'district']):
             try:
                 a.parent = Area.objects.get(code = a.code[:-2])
                 a.save()
