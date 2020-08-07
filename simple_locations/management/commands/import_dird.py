@@ -66,20 +66,22 @@ class Command(BaseCommand):
                     self.import_directory(tmpdirname)
     
     def import_directory(self, tmpdirname: str):
-      for filename in [
-            f for f in os.listdir(tmpdirname) if f.endswith(".shp")
-        ]:
-                        
-        area_definition = area_definition_set[filename]
-        area_type = AreaType.objects.get_or_create(
-            name=area_definition["areatype"],
-            slug=area_definition["areatype"],
-        )[0]  # type: AreaType
-        self.import_shp(
-            shape_path=Path(tmpdirname) / filename,
-            area_type=area_type,
-            field_mapping=area_definition,
-        )
+        self.stderr.write(self.style.NOTICE(f'Importing shapes'))
+        for filename in [
+                f for f in os.listdir(tmpdirname) if f.endswith(".shp")
+            ]:
+                            
+            area_definition = area_definition_set[filename]
+            area_type = AreaType.objects.get_or_create(
+                name=area_definition["areatype"],
+                slug=area_definition["areatype"],
+            )[0]  # type: AreaType
+            self.stderr.write(self.style.NOTICE(f'Importing {tmpdirname} / {filename}'))
+            self.import_shp(
+                shape_path=Path(tmpdirname) / filename,
+                area_type=area_type,
+                field_mapping=area_definition,
+            )
 
     def import_shp(self, shape_path: Path, area_type: AreaType, field_mapping: dict) -> None:
 
@@ -125,21 +127,22 @@ class Command(BaseCommand):
         '''
         As we do not have a unified "Country" shape, merge the Districts to create the top level
         '''
-        self.stderr.write(self.style.SUCCESS('Merge districts'))
+        self.stderr.write(self.style.SUCCESS('Merge provinces'))
         country_level_area = Area.objects.get_or_create(
             kind = AreaType.objects.get_or_create(name='country', slug='country')[0],
-            geom = Area.objects.filter(kind__name='district').aggregate(Union('geom'))['geom__union'],  # Multipolygon object
+            geom = Area.objects.filter(kind__name='province').aggregate(Union('geom'))['geom__union'],  # Multipolygon object
             name = 'Papua New Guinea',
+            code = 'PNG'
         )[0]
 
-        for d in Area.objects.filter(kind__name='district'):
+        for d in Area.objects.filter(kind__name='province'):
             d.parent = country_level_area
             d.save()
 
     def rebuild_tree(self):
 
         self.stderr.write(self.style.SUCCESS('Reset Area parent code'))
-        for a in Area.objects.exclude(kind__name__in=['country', 'district']):
+        for a in Area.objects.exclude(kind__name__in=['country', 'province']):
             try:
                 a.parent = Area.objects.get(code = a.code[:-2])
                 a.save()
