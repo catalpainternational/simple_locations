@@ -7,3 +7,7 @@
 build/
 *.egg
 .pytest_cache/
+
+# Translations
+*.pot
+*.mo
