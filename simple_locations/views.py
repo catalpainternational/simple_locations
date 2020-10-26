@@ -1,16 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, get_object_or_404
-from django.template import RequestContext
-from simple_locations.models import Area, Point, AreaType
-from django.db import IntegrityError
-from forms import LocationForm
-from django.http import HttpResponseRedirect
-from mptt.exceptions import InvalidMove
-from django.views.decorators.cache import cache_control
 from django.conf import settings
 from django.core import serializers
-from django.http import HttpResponse
+from django.db import IntegrityError
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.template import RequestContext
+from django.views.decorators.cache import cache_control
+
+from mptt.exceptions import InvalidMove
+from simple_locations.models import Area, Point, AreaType
+
+from .forms import LocationForm
+
 
 # firefox likes to aaggressively cache forms set cache control to false to override this
 @cache_control(no_cache=True)
