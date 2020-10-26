@@ -2,14 +2,15 @@
 # encoding=utf-8
 # vim: ai ts=4 sts=4 et sw=4
 
-
 from django.contrib.gis.db.models import MultiPolygonField
 from django.db import models
 from django.utils.translation import ugettext as _, ugettext_lazy as __
-from django.utils.encoding import python_2_unicode_compatible
+
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
+from six import python_2_unicode_compatible
+
 
 @python_2_unicode_compatible
 class Point(models.Model):
