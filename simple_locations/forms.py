@@ -18,7 +18,7 @@ class LocationForm(forms.Form):
     name = forms.CharField(max_length=100)
     code = forms.CharField(max_length=50,required=False)
     pk = forms.CharField(widget=forms.HiddenInput(), required=False)
-    target = TreeNodeChoiceField(queryset=Area.tree.all(),
+    target = TreeNodeChoiceField(queryset=Area.objects.all(),
                                  level_indicator=u'++', required=False)
     lat = forms.DecimalField(required=False)
     lon = forms.DecimalField(required=False)
