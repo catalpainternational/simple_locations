@@ -11,3 +11,5 @@ build/
 # Translations
 *.pot
 *.mo
+
+venv/

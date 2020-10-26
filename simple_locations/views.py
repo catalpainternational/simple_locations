@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
-from simple_locations.models import Area,Point,AreaType
+from simple_locations.models import Area, Point, AreaType
 from django.db import IntegrityError
 from forms import LocationForm
 from django.http import HttpResponseRedirect
@@ -12,18 +12,22 @@ from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
 
-#firefox likes to aaggressively cache forms set cache control to false to override this
+# firefox likes to aaggressively cache forms set cache control to false to override this
 @cache_control(no_cache=True)
 def simple_locations(request):
     form = LocationForm()
     nodes = Area.tree.all()
-    return render_to_response(
-            'simple_locations/index.html',
-            {'form' : form,
-             'nodes':nodes,
-             'map_key':settings.MAP_KEY,
-            },
-            context_instance = RequestContext(request))
+    return render(
+        request,
+        'simple_locations/index.html',
+        {
+            'form': form,
+            'nodes': nodes,
+            'map_key': settings.MAP_KEY,
+        },
+        context_instance=RequestContext(request),
+    )
+
 
 def add_location(req, parent_id=None):
     nodes = Area.tree.all()
@@ -37,50 +41,56 @@ def add_location(req, parent_id=None):
             lon = form.cleaned_data['lon']
             target = form.cleaned_data['target']
             position = form.cleaned_data['position']
-            kind=form.cleaned_data['kind']
+            kind = form.cleaned_data['kind']
 
-            area=Area.objects.create(name=name,code=code,parent=target)
+            area = Area.objects.create(name=name, code=code, parent=target)
             if lat and lon:
-                location=Point(latitude=lat,longitude=lon)
+                location = Point(latitude=lat, longitude=lon)
                 location.save()
-                area.location=location
+                area.location = location
             try:
-                kind=get_object_or_404(AreaType,pk=int(kind))
-                area.kind=kind
+                kind = get_object_or_404(AreaType, pk=int(kind))
+                area.kind = kind
             except ValueError:
                 pass
             area.save()
             form = LocationForm()
 
-            return render_to_response(
-                    'simple_locations/location_edit.html'
-                    ,{'form': form, 'nodes': nodes},
-                    context_instance=RequestContext(req))
+            return render(
+                req,
+                'simple_locations/location_edit.html',
+                {'form': form, 'nodes': nodes},
+                context_instance=RequestContext(req),
+            )
         else:
             form = LocationForm(req.POST)
-            return render_to_response(
-                    'simple_locations/location_edit.html'
-                    ,{'form': form, 'nodes': nodes},
-                    context_instance=RequestContext(req))
+            return render(
+                req,
+                'simple_locations/location_edit.html',
+                {'form': form, 'nodes': nodes},
+                context_instance=RequestContext(req),
+            )
 
     else:
-        if (parent_id):
+        if parent_id:
             default_data = {}
             parent = get_object_or_404(Area, pk=parent_id)
             default_data['move_choice'] = True
             default_data['target'] = parent.pk
             default_data['position'] = 'last-child'
             form = LocationForm(default_data)
-            form._errors=''
-
+            form._errors = ''
 
         else:
             form = LocationForm()
 
-    return render_to_response(
-            'simple_locations/location_edit.html'
-            ,{'form': form, 'nodes': nodes},
-            context_instance=RequestContext(req))
+    return render(
+        req,
+        'simple_locations/location_edit.html',
+        {'form': form, 'nodes': nodes},
+        context_instance=RequestContext(req),
+    )
+
 
 def edit_location(req, area_id):
     location = get_object_or_404(Area, pk=area_id)
@@ -92,16 +102,16 @@ def edit_location(req, area_id):
             area = Area.objects.get(pk=area_id)
             area.name = form.cleaned_data['name']
             area.code = form.cleaned_data['code']
-            lat=form.cleaned_data['lat']
-            lon=form.cleaned_data['lon']
-            kind=form.cleaned_data['kind']
+            lat = form.cleaned_data['lat']
+            lon = form.cleaned_data['lon']
+            kind = form.cleaned_data['kind']
             try:
-                kind = get_object_or_404(AreaType,pk=int(kind))
+                kind = get_object_or_404(AreaType, pk=int(kind))
                 area.kind = kind
             except ValueError:
                 pass
             if lat and lon:
-                point = Point(latitude=lat,longitude=lon)
+                point = Point(latitude=lat, longitude=lon)
                 point.save()
                 area.location = point
             try:
@@ -115,7 +125,7 @@ def edit_location(req, area_id):
                 position = form.cleaned_data['position']
 
                 try:
-                    area.parent=target
+                    area.parent = target
                     area.save()
                 except InvalidMove:
                     form.errors['position'] = 'This move is invalid'
@@ -123,17 +133,27 @@ def edit_location(req, area_id):
 
             if saved:
                 form = LocationForm()
-                return render_to_response("simple_locations/location_edit.html", {"form":form, 'nodes':Area.tree.all()},
-                                          context_instance=RequestContext(req))
+                return render(
+                    req,
+                    'simple_locations/location_edit.html',
+                    {'form': form, 'nodes': Area.tree.all()},
+                    context_instance=RequestContext(req),
+                )
             else:
-                return render_to_response("simple_locations/location_edit.html",
-                                          {"form":form, 'item': location, 'nodes':Area.tree.all()},
-                                          context_instance=RequestContext(req))
+                return render(
+                    req,
+                    'simple_locations/location_edit.html',
+                    {'form': form, 'item': location, 'nodes': Area.tree.all()},
+                    context_instance=RequestContext(req),
+                )
 
         else:
-            return render_to_response("simple_locations/location_edit.html",
-                                      { 'form': form, 'item': location },
-                                      context_instance=RequestContext(req))
+            return render(
+                req,
+                'simple_locations/location_edit.html',
+                {'form': form, 'item': location},
+                context_instance=RequestContext(req),
+            )
     else:
         default_data = {}
         default_data['pk'] = location.pk
@@ -149,9 +169,13 @@ def edit_location(req, area_id):
             default_data['lat'] = location.location.latitude
             default_data['lon'] = location.location.longitude
         form = LocationForm(default_data)
-        return render_to_response("simple_locations/location_edit.html",
-                                  {'form':form, 'nodes':Area.tree.all(),'item':location},
-                                  context_instance=RequestContext(req))
+        return render(
+            req,
+            'simple_locations/location_edit.html',
+            {'form': form, 'nodes': Area.tree.all(), 'item': location},
+            context_instance=RequestContext(req),
+        )
+
 
 def delete_location(request, area_id):
     node = get_object_or_404(Area, pk=area_id)
@@ -160,14 +184,16 @@ def delete_location(request, area_id):
 
     return HttpResponseRedirect('/simple_locations/render_tree')
 
+
 @cache_control(no_cache=True)
 def render_location(request):
     nodes = Area.tree.all()
-    return render_to_response('simple_locations/treepanel.html',{'nodes':nodes})
+    return render(request, 'simple_locations/treepanel.html', {'nodes': nodes})
 
 
 def area_search(request):
     import json
+
     areadetails = []
     if request.GET.__contains__('query'):
         objects = Area.objects.filter(name__iregex=request.GET['query'])
@@ -176,7 +202,7 @@ def area_search(request):
     for area in objects:
         areadetail = {}
         areadetail['value'] = area.pk
-        areadetail['name']= area.name
+        areadetail['name'] = area.name
         areadetail['kind'] = area.kind.name
         if area.parent:
             areadetail['parentname'] = area.parent.name
