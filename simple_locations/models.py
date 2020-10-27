@@ -9,10 +9,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy as __
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
-from six import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class Point(models.Model):
 
     class Meta:
@@ -28,7 +26,6 @@ class Point(models.Model):
                                          'lon': self.longitude}
 
 
-@python_2_unicode_compatible
 class AreaType(models.Model):
 
     class Meta:
@@ -43,7 +40,6 @@ class AreaType(models.Model):
         return _(self.name)
 
 
-@python_2_unicode_compatible
 class Area(MPTTModel):
 
     class Meta:
