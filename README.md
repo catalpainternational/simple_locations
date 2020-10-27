@@ -10,7 +10,7 @@ For modeltranslations, please remember to run `sync_translation_fields` in order
 
 #### Changelog
 
-  * Version 2.75.3
+  * Version 2.77
     - first pass of updates for Python 3.8+ and Django 3.1+
 
   * Version 2.75
