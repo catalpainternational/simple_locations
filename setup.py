@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='simple_locations',
-    version='2.75.2',
+    version='2.75.3',
     license="BSD",
 
     description="The common location package used for catalpa's projects.",
@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
-    install_requires=['django-mptt>=0.9.0'],
+    install_requires=['django-mptt>=0.11.0'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
