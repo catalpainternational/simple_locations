@@ -13,3 +13,5 @@ build/
 *.mo
 
 venv/
+env/
+dist/
