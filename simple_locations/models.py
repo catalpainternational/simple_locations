@@ -4,7 +4,7 @@
 
 from django.contrib.gis.db.models import MultiPolygonField
 from django.db import models
-from django.utils.translation import ugettext as _, ugettext_lazy as __
+from django.utils.translation import gettext as _, gettext_lazy as __
 
 # from code_generator.fields import CodeField # removed so that we can use
 # South
