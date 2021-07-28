@@ -5,7 +5,7 @@
 
 from django.contrib.gis.db.models import MultiPolygonField
 from django.db import models
-from django.utils.translation import ugettext as _, ugettext_lazy as __
+from django.utils.translation import gettext as _, gettext_lazy as __
 # from code_generator.fields import CodeField # removed so that we can use
 # South
 from mptt.models import MPTTModel
@@ -134,7 +134,7 @@ class AreaIndicator(DateStampedModel):
 
     class IndicatorMeasureChoice(models.TextChoices):
         """
-        Derived from the IATI standard, this determines the "type" of 
+        Derived from the IATI standard, this determines the "type" of
         data which is being measured - is it percentage, count, or on some sort of scale?
         """
         UNIT = 'U', _('Units')
@@ -145,7 +145,7 @@ class AreaIndicator(DateStampedModel):
 
     area = models.ForeignKey('Area', on_delete=models.CASCADE)
     name = models.TextField()
-    
+
     measure = models.CharField(
         max_length=2,
         choices=IndicatorMeasureChoice.choices,
