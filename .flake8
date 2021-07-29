@@ -1,0 +1,6 @@
+# inspired from the Django setup.cfg: https://github.com/django/django/blob/master/setup.cfg
+
+[flake8]
+exclude = env,venv
+ignore = W601,E501,W504,W503
+max-line-length = 119
