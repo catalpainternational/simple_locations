@@ -175,7 +175,6 @@ def delete_location(request, area_id):
     return HttpResponseRedirect("/simple_locations/render_tree")
 
 
-
 @cache_control(no_cache=True)
 def render_location(request):
     nodes = Area.tree.all()

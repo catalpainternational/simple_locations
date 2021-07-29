@@ -2,18 +2,12 @@ from django.contrib.gis.db.models import MultiPolygonField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
-
 from mptt.models import MPTTModel
 
 
 class DateStampedModel(models.Model):
     date_created = models.DateField(verbose_name=_("Date Created"), auto_now_add=True, null=True, blank=True)
     date_modified = models.DateField(verbose_name=_("Last Modified"), null=True, blank=True)
-
-
-class Point(models.Model):
-    class Meta:
-        abstract = True
 
 
 class Point(models.Model):
@@ -78,7 +72,6 @@ class Area(MPTTModel):
 
         Example District of Bamako"""
         return "%(type)s of %(area)s" % {"type": self.kind.name, "area": self.name}
-
 
     def display_with_parent(self):
         """Print Area name and kind and parent name and kind

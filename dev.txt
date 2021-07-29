@@ -18,10 +18,14 @@ distlib==0.3.2
     # via virtualenv
 filelock==3.0.12
     # via virtualenv
+flake8==3.9.2
+    # via -r dev.in
 identify==2.2.11
     # via pre-commit
 isort==5.9.2
     # via -r dev.in
+mccabe==0.6.1
+    # via flake8
 mypy-extensions==0.4.3
     # via black
 nodeenv==1.6.0
@@ -32,6 +36,10 @@ platformdirs==2.1.0
     # via virtualenv
 pre-commit==2.13.0
     # via -r dev.in
+pycodestyle==2.7.0
+    # via flake8
+pyflakes==2.3.1
+    # via flake8
 pyyaml==5.4.1
     # via pre-commit
 regex==2021.7.6

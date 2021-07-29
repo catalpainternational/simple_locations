@@ -2,14 +2,6 @@ from django import forms
 from django.forms.utils import ErrorList
 from mptt.forms import TreeNodeChoiceField
 
-from django.conf import settings
-from django.forms import fields
-from django.forms.widgets import Widget, Select
-from django.forms.utils import ErrorList
-from django.utils.safestring import mark_safe
-from django.template.context import Context
-from django.template.loader import get_template
-
 from simple_locations.models import Area, AreaType
 
 

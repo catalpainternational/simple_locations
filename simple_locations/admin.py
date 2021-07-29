@@ -1,7 +1,3 @@
-#!/usr/bin/env python
-# encoding=utf-8
-# maintainer rgaudin
-
 from django.conf import settings
 from django.contrib.gis import admin
 from mptt.admin import MPTTModelAdmin
@@ -19,16 +15,6 @@ try:
 except ImportError:
     TranslationAdmin = admin.ModelAdmin
     pass
-
-# Disable this one because its signature does not play nicely with others. See modeltranslations issue 510
-# try:
-#     # optionally use django_extensions' ForeignKeyAutocompleteAdmin if
-#     # available
-#     from django_extensions.admin import ForeignKeyAutocompleteAdmin
-#     area_admin_classes.append(ForeignKeyAutocompleteAdmin)
-# except ImportError:
-#     ForeignKeyAutocompleteAdmin = None
-#     pass
 
 
 class PointAdmin(admin.ModelAdmin):

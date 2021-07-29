@@ -13,9 +13,6 @@ exclude = '''
   | \.tox
   | \.venv
   | \env
-  | \env3.8
   | migrations
-  | openly
-  | simple_locations
 )/
 '''

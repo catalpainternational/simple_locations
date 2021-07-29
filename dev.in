@@ -1,4 +1,5 @@
 -c requirements.in
 black
 isort
+flake8
 pre-commit
