@@ -41,7 +41,6 @@ def add_location(req, parent_id=None):
             lon = form.cleaned_data["lon"]
             target = form.cleaned_data["target"]
             kind = form.cleaned_data["kind"]
-
             area = Area.objects.create(name=name, code=code, parent=target)
             if lat and lon:
                 location = Point(latitude=lat, longitude=lon)
@@ -77,7 +76,6 @@ def add_location(req, parent_id=None):
             default_data["position"] = "last-child"
             form = LocationForm(default_data)
             form._errors = ""
-
         else:
             form = LocationForm()
 
@@ -101,6 +99,7 @@ def edit_location(req, area_id):
             lat = form.cleaned_data["lat"]
             lon = form.cleaned_data["lon"]
             kind = form.cleaned_data["kind"]
+
             try:
                 kind = get_object_or_404(AreaType, pk=int(kind))
                 area.kind = kind
@@ -176,6 +175,7 @@ def delete_location(request, area_id):
     return HttpResponseRedirect("/simple_locations/render_tree")
 
 
+
 @cache_control(no_cache=True)
 def render_location(request):
     nodes = Area.tree.all()
@@ -195,6 +195,7 @@ def area_search(request):
         areadetail["value"] = area.pk
         areadetail["name"] = area.name
         areadetail["kind"] = area.kind.name
+
         if area.parent:
             areadetail["parentname"] = area.parent.name
             areadetail["parentkind"] = area.parent.kind.name
