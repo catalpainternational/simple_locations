@@ -1,5 +1,13 @@
 from django.urls import path
-from simple_locations.views import edit_location, add_location, delete_location, render_location, simple_locations, area_search
+
+from simple_locations.views import (
+    add_location,
+    area_search,
+    delete_location,
+    edit_location,
+    render_location,
+    simple_locations,
+)
 
 urlpatterns = [
     path("simple_locations/edit/<int:area_id>/", edit_location),
