@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.core import serializers
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -42,7 +41,6 @@ def add_location(req, parent_id=None):
             lat = form.cleaned_data['lat']
             lon = form.cleaned_data['lon']
             target = form.cleaned_data['target']
-            position = form.cleaned_data['position']
             kind = form.cleaned_data['kind']
 
             area = Area.objects.create(name=name, code=code, parent=target)
@@ -124,7 +122,6 @@ def edit_location(req, area_id):
 
             if form.cleaned_data['move_choice']:
                 target = form.cleaned_data['target']
-                position = form.cleaned_data['position']
 
                 try:
                     area.parent = target
