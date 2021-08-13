@@ -9,6 +9,9 @@ class DateStampedModel(models.Model):
     date_created = models.DateField(verbose_name=_("Date Created"), auto_now_add=True, null=True, blank=True)
     date_modified = models.DateField(verbose_name=_("Last Modified"), null=True, blank=True)
 
+    class Meta:
+        abstract = True
+
 
 class Point(models.Model):
     class Meta:
