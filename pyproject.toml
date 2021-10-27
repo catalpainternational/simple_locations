@@ -18,8 +18,8 @@ exclude = '''
 '''
 
 [tool.poetry]
-name = "simple-locations"
-version = "2.7.3"
+name = "simple-locations-test"
+version = "2.78"
 description = "The common location package for Catalpa's projects"
 authors = ["Joshua Brooks <josh.vdbroek@gmail.com>"]
 license = "BSD"
