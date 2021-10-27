@@ -18,7 +18,7 @@ exclude = '''
 '''
 
 [tool.poetry]
-name = "simple-locations-test"
+name = "simple-locations"
 version = "2.78"
 description = "The common location package for Catalpa's projects"
 authors = ["Joshua Brooks <josh.vdbroek@gmail.com>"]
