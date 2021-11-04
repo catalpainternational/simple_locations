@@ -68,7 +68,10 @@ class Command(BaseCommand):
         for filename in [f for f in os.listdir(tmpdirname) if f.endswith(".shp")]:
 
             area_definition = area_definition_set[filename]
-            area_type = AreaType.objects.get_or_create(name=area_definition["areatype"], slug=area_definition["areatype"],)[
+            area_type = AreaType.objects.get_or_create(
+                name=area_definition["areatype"],
+                slug=area_definition["areatype"],
+            )[
                 0
             ]  # type: AreaType
             self.stderr.write(self.style.NOTICE(f"Importing {tmpdirname} / {filename}"))
@@ -123,7 +126,9 @@ class Command(BaseCommand):
         self.stderr.write(self.style.SUCCESS("Merge provinces"))
         country_level_area = Area.objects.get_or_create(
             kind=AreaType.objects.get_or_create(name="country", slug="country")[0],
-            geom=Area.objects.filter(kind__name="province").aggregate(Union("geom"))["geom__union"],  # Multipolygon object
+            geom=Area.objects.filter(kind__name="province").aggregate(Union("geom"))[
+                "geom__union"
+            ],  # Multipolygon object
             name="Papua New Guinea",
             code="PNG",
         )[0]
@@ -256,4 +261,6 @@ class Command(BaseCommand):
             else:
                 area.name = rename.wiki_name
                 area.save()
-                self.stdout.write(self.style.SUCCESS(f'Successfully renamed: "{rename.nso_name}" to "{rename.wiki_name}s'))
+                self.stdout.write(
+                    self.style.SUCCESS(f'Successfully renamed: "{rename.nso_name}" to "{rename.wiki_name}s')
+                )
