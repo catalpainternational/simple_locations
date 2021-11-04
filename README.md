@@ -8,7 +8,30 @@ The admin site is set up to use Modeltranslations (if available in the parent ap
 
 For modeltranslations, please remember to run `sync_translation_fields` in order to get `name_en`, `name_tet` etc. fields.
 
+
+## Environment
+
+This is intended to be compatible with:
+ - Django 3.1, 3.2, 4.0
+ - Python 3.7, 3.8, 3.9
+
+```sh
+gh repo clone catalpainternational/simple_locations
+cd simple_locations
+python -m venv env
+. env/bin/activate
+pip install pip-tools
+pip-sync requirements.txt dev.txt
+pre-commit install
+```
+
 #### Changelog
+
+  * Version 3.0
+    - Code style changes (black, flake8) and
+
+  * Version 2.77
+    - first pass of updates for Python 3.8+ and Django 3.1+
 
   * Version 2.75
     - add modeltranslations
@@ -29,7 +52,7 @@ For modeltranslations, please remember to run `sync_translation_fields` in order
 
 * install setuptools and twine
 * Bump `setup.py` to a new version
-* 
+*
 * Create a git tag for this version: `git tag <version_number>`
 * Push the tag to github `git push origin <version_number>`
 * Upload the new version to PyPi: `python setup.py sdist upload`

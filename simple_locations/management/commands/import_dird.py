@@ -4,17 +4,17 @@ import tempfile
 import urllib
 import zipfile
 from pathlib import Path
+from typing import Any, List, NamedTuple
+from warnings import warn
 
+from django.contrib.gis.db.models import Union
 from django.contrib.gis.gdal import DataSource
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.core.management.base import BaseCommand
-
-from django.contrib.gis.db.models import Union
 from django.db import IntegrityError
 
-from typing import Any, NamedTuple, List
-
 from simple_locations.models import Area, AreaType
+
 
 class RenameDistrict(NamedTuple):
     nso_name: str
@@ -56,27 +56,22 @@ class Command(BaseCommand):
         zip_url: str = "https://png-data.sprep.org/system/files/NSO_PNG%20Boundaries.zip",
     ):
 
-        with urllib.request.urlopen(
-            zip_url
-        ) as response, tempfile.NamedTemporaryFile() as tmp_file:
+        with urllib.request.urlopen(zip_url) as response, tempfile.NamedTemporaryFile() as tmp_file:
             shutil.copyfileobj(response, tmp_file)
             with zipfile.ZipFile(tmp_file) as tmpzip:
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     tmpzip.extractall(tmpdirname)
                     self.import_directory(tmpdirname)
-    
+
     def import_directory(self, tmpdirname: str):
-        self.stderr.write(self.style.NOTICE(f'Importing shapes'))
-        for filename in [
-                f for f in os.listdir(tmpdirname) if f.endswith(".shp")
-            ]:
-                            
+        self.stderr.write(self.style.NOTICE("Importing shapes"))
+        for filename in [f for f in os.listdir(tmpdirname) if f.endswith(".shp")]:
+
             area_definition = area_definition_set[filename]
-            area_type = AreaType.objects.get_or_create(
-                name=area_definition["areatype"],
-                slug=area_definition["areatype"],
-            )[0]  # type: AreaType
-            self.stderr.write(self.style.NOTICE(f'Importing {tmpdirname} / {filename}'))
+            area_type = AreaType.objects.get_or_create(name=area_definition["areatype"], slug=area_definition["areatype"],)[
+                0
+            ]  # type: AreaType
+            self.stderr.write(self.style.NOTICE(f"Importing {tmpdirname} / {filename}"))
             self.import_shp(
                 shape_path=Path(tmpdirname) / filename,
                 area_type=area_type,
@@ -86,9 +81,7 @@ class Command(BaseCommand):
     def import_shp(self, shape_path: Path, area_type: AreaType, field_mapping: dict) -> None:
 
         for feature in DataSource(str(shape_path))[0]:
-            self.import_feature(
-                feature=feature, area_type=area_type, field_mapping=field_mapping
-            )
+            self.import_feature(feature=feature, area_type=area_type, field_mapping=field_mapping)
 
     def import_feature(
         self,
@@ -110,7 +103,7 @@ class Command(BaseCommand):
             asset_geometry.transform(database_srid)
 
         if Area.objects.filter(code=code).exists():
-            self.stderr.write(self.style.NOTICE(f'Skip {code} because it already exists'))
+            self.stderr.write(self.style.NOTICE(f"Skip {code} because it already exists"))
             return Area.objects.get(code=code)
         try:
             area = Area.objects.create(
@@ -121,41 +114,41 @@ class Command(BaseCommand):
             )
             return area
         except IntegrityError as E:
-            self.stderr.write(self.style.ERROR(f'Error writing code {code}: {E}'[:140]+'...' ))
+            self.stderr.write(self.style.ERROR(f"Error writing code {code}: {E}"[:140] + "..."))
 
     def merge_districts(self):
-        '''
+        """
         As we do not have a unified "Country" shape, merge the Districts to create the top level
-        '''
-        self.stderr.write(self.style.SUCCESS('Merge provinces'))
+        """
+        self.stderr.write(self.style.SUCCESS("Merge provinces"))
         country_level_area = Area.objects.get_or_create(
-            kind = AreaType.objects.get_or_create(name='country', slug='country')[0],
-            geom = Area.objects.filter(kind__name='province').aggregate(Union('geom'))['geom__union'],  # Multipolygon object
-            name = 'Papua New Guinea',
-            code = 'PNG'
+            kind=AreaType.objects.get_or_create(name="country", slug="country")[0],
+            geom=Area.objects.filter(kind__name="province").aggregate(Union("geom"))["geom__union"],  # Multipolygon object
+            name="Papua New Guinea",
+            code="PNG",
         )[0]
 
-        for d in Area.objects.filter(kind__name='province'):
+        for d in Area.objects.filter(kind__name="province"):
             d.parent = country_level_area
             d.save()
 
     def rebuild_tree(self):
 
-        self.stderr.write(self.style.SUCCESS('Reset Area parent code'))
-        for a in Area.objects.exclude(kind__name__in=['country', 'province']):
+        self.stderr.write(self.style.SUCCESS("Reset Area parent code"))
+        for a in Area.objects.exclude(kind__name__in=["country", "province"]):
             try:
-                a.parent = Area.objects.get(code = a.code[:-2])
+                a.parent = Area.objects.get(code=a.code[:-2])
                 a.save()
-            except:
+            except Exception as E:
+                warn(f"{E}")
                 pass
-        
-        self.stderr.write(self.style.SUCCESS('Rebuild the locations Area tree'))
+
+        self.stderr.write(self.style.SUCCESS("Rebuild the locations Area tree"))
         Area.objects.rebuild()
 
-
     def perform_rename(self):
-        
-        sources = '''Abau District	Abau District
+
+        sources = """Abau District	Abau District
         Aitape-Lumi District	Aitape/Lumi District
         Alotau District	Alotau District
         Ambunti-Dreikikier District	Ambunti/Drekikier District
@@ -241,42 +234,26 @@ class Command(BaseCommand):
         Wapenamanda District	Wapenamanda District
         Wewak District	Wewak District
         Wosera-Gawi District	Wosera Gawi District
-        Yangoru-Saussia District	Yangoru Saussia District'''
+        Yangoru-Saussia District	Yangoru Saussia District"""
 
         renames = []  # type: List[RenameDistrict]
 
-        for s in sources.split('\n'):
-            n = s.split('\t')
+        for s in sources.split("\n"):
+            n = s.split("\t")
             renames.append(RenameDistrict(n[1].strip(), n[0].strip()))
 
         # Area.objects.all().delete()
-        self.stdout.write(
-            self.style.MIGRATE_HEADING(
-                "~~~ Starting rename ~~~"
-            )
-        )
+        self.stdout.write(self.style.MIGRATE_HEADING("~~~ Starting rename ~~~"))
         for rename in renames:
             try:
-                area = Area.objects.get(name = rename.nso_name, kind__name='district')
+                area = Area.objects.get(name=rename.nso_name, kind__name="district")
             except Area.DoesNotExist:
-                self.stdout.write(
-                    self.style.WARNING(
-                    F'Area does not exist: "{rename.nso_name}"'
-                    )
-                )
+                self.stdout.write(self.style.WARNING(f'Area does not exist: "{rename.nso_name}"'))
                 continue
-            
+
             if area.name == rename.wiki_name:
-                self.stdout.write(
-                    self.style.SUCCESS(
-                    F'No change: "{rename.nso_name}"'
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f'No change: "{rename.nso_name}"'))
             else:
                 area.name = rename.wiki_name
                 area.save()
-                self.stdout.write(
-                    self.style.SUCCESS(
-                    F'Successfully renamed: "{rename.nso_name}" to "{rename.wiki_name}s'
-                    )
-                )
+                self.stdout.write(self.style.SUCCESS(f'Successfully renamed: "{rename.nso_name}" to "{rename.wiki_name}s'))

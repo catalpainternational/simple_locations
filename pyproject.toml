@@ -1,0 +1,48 @@
+[tool.isort]
+profile = 'black'
+skip = ['env', 'migrations']
+
+[tool.black]
+line-length = 180
+target-version = ['py38']
+include = '\.pyi?$'
+exclude = '''
+/(
+  | \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | \env
+  | migrations
+)/
+'''
+
+[tool.poetry]
+name = "simple-locations"
+version = "3.0.1"
+description = "The common location package for Catalpa's projects"
+authors = [
+  "Joshua Brooks <josh@catalpa.io>",
+  "Anders Hofstee <anders@catalpa.io>",
+  "Nicoas Hoibian <admin@catalpa.io>",
+]
+license = "BSD"
+
+readme = 'README.md'
+
+repository = "https://github.com/catalpainternational/simple_locations"
+homepage = "https://github.com/catalpainternational/simple_locations"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django-mptt = "^0.13.4"
+
+[tool.poetry.dev-dependencies]
+black = "^21.9b0"
+flake8 = "^4.0.1"
+isort = "^5.9.3"
+pre-commit = "^2.15.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

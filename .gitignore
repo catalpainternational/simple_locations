@@ -139,3 +139,7 @@ cython_debug/
 
 # Our IDE bits
 .vscode/
+
+venv/
+env/
+dist/
