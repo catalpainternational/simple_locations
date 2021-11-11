@@ -53,6 +53,7 @@ class Area(MPTTModel):
     name = models.CharField(max_length=100)
     code = models.CharField(
         max_length=50,
+        unique=True
     )  # was CodeField
     kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
     location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
