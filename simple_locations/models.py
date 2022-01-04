@@ -51,10 +51,7 @@ class Area(MPTTModel):
         order_insertion_by = ["name"]
 
     name = models.CharField(max_length=100)
-    code = models.CharField(
-        max_length=50,
-        unique=True
-    )  # was CodeField
+    code = models.CharField(max_length=50, unique=True)  # was CodeField
     kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
     location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
