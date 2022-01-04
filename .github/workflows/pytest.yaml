@@ -47,7 +47,7 @@ jobs:
               run: poetry install --no-interaction
 
             - name: Code Quality black
-              run: poetry run black django_querycache --check
+              run: poetry run black simple_locations --check
 
     code-quality-isort:
         runs-on: ubuntu-latest
@@ -93,7 +93,7 @@ jobs:
               run: poetry install --no-interaction
 
             - name: Code Quality isort
-              run: poetry run isort django_querycache --check --diff
+              run: poetry run isort simple_locations --check --diff
 
     code-quality-mypy:
         runs-on: ubuntu-latest
@@ -139,7 +139,7 @@ jobs:
               run: poetry install --no-interaction
 
             - name: Code Quality mypy
-              run: poetry run mypy django_querycache
+              run: poetry run mypy simple_locations
 
     code-quality-flake8:
         runs-on: ubuntu-latest
@@ -185,4 +185,4 @@ jobs:
               run: poetry install --no-interaction
 
             - name: Code Quality flake8
-              run: poetry run flake8 django_querycache
+              run: poetry run flake8 simple_locations
