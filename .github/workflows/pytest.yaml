@@ -1,0 +1,188 @@
+name: CI
+
+on: [push]
+
+jobs:
+    code-quality-black:
+        runs-on: ubuntu-latest
+        steps:
+            #----------------------------------------------
+            #       check-out repo and set-up python
+            #----------------------------------------------
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Set up python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            #----------------------------------------------
+            #  -----  install & configure poetry  -----
+            #----------------------------------------------
+            - name: Install Poetry
+              uses: snok/install-poetry@v1
+              with:
+                  virtualenvs-create: true
+                  virtualenvs-in-project: true
+                  installer-parallel: true
+
+            #----------------------------------------------
+            #       load cached venv if cache exists
+            #----------------------------------------------
+            - name: Load cached venv
+              id: cached-poetry-dependencies
+              uses: actions/cache@v2
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+            #----------------------------------------------
+            # install dependencies if cache does not exist
+            #----------------------------------------------
+            - name: Install dependencies
+              if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+              run: poetry install --no-interaction --no-root
+            #----------------------------------------------
+            # install your root project, if required
+            #----------------------------------------------
+            - name: Install library
+              run: poetry install --no-interaction
+
+            - name: Code Quality black
+              run: poetry run black django_querycache --check
+
+    code-quality-isort:
+        runs-on: ubuntu-latest
+        steps:
+            #----------------------------------------------
+            #       check-out repo and set-up python
+            #----------------------------------------------
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Set up python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            #----------------------------------------------
+            #  -----  install & configure poetry  -----
+            #----------------------------------------------
+            - name: Install Poetry
+              uses: snok/install-poetry@v1
+              with:
+                  virtualenvs-create: true
+                  virtualenvs-in-project: true
+                  installer-parallel: true
+
+            #----------------------------------------------
+            #       load cached venv if cache exists
+            #----------------------------------------------
+            - name: Load cached venv
+              id: cached-poetry-dependencies
+              uses: actions/cache@v2
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+            #----------------------------------------------
+            # install dependencies if cache does not exist
+            #----------------------------------------------
+            - name: Install dependencies
+              if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+              run: poetry install --no-interaction --no-root
+            #----------------------------------------------
+            # install your root project, if required
+            #----------------------------------------------
+            - name: Install library
+              run: poetry install --no-interaction
+
+            - name: Code Quality isort
+              run: poetry run isort django_querycache --check --diff
+
+    code-quality-mypy:
+        runs-on: ubuntu-latest
+        steps:
+            #----------------------------------------------
+            #       check-out repo and set-up python
+            #----------------------------------------------
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Set up python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            #----------------------------------------------
+            #  -----  install & configure poetry  -----
+            #----------------------------------------------
+            - name: Install Poetry
+              uses: snok/install-poetry@v1
+              with:
+                  virtualenvs-create: true
+                  virtualenvs-in-project: true
+                  installer-parallel: true
+
+            #----------------------------------------------
+            #       load cached venv if cache exists
+            #----------------------------------------------
+            - name: Load cached venv
+              id: cached-poetry-dependencies
+              uses: actions/cache@v2
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+            #----------------------------------------------
+            # install dependencies if cache does not exist
+            #----------------------------------------------
+            - name: Install dependencies
+              if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+              run: poetry install --no-interaction --no-root
+            #----------------------------------------------
+            # install your root project, if required
+            #----------------------------------------------
+            - name: Install library
+              run: poetry install --no-interaction
+
+            - name: Code Quality mypy
+              run: poetry run mypy django_querycache
+
+    code-quality-flake8:
+        runs-on: ubuntu-latest
+        steps:
+            #----------------------------------------------
+            #       check-out repo and set-up python
+            #----------------------------------------------
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Set up python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            #----------------------------------------------
+            #  -----  install & configure poetry  -----
+            #----------------------------------------------
+            - name: Install Poetry
+              uses: snok/install-poetry@v1
+              with:
+                  virtualenvs-create: true
+                  virtualenvs-in-project: true
+                  installer-parallel: true
+
+            #----------------------------------------------
+            #       load cached venv if cache exists
+            #----------------------------------------------
+            - name: Load cached venv
+              id: cached-poetry-dependencies
+              uses: actions/cache@v2
+              with:
+                  path: .venv
+                  key: venv-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+            #----------------------------------------------
+            # install dependencies if cache does not exist
+            #----------------------------------------------
+            - name: Install dependencies
+              if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+              run: poetry install --no-interaction --no-root
+            #----------------------------------------------
+            # install your root project, if required
+            #----------------------------------------------
+            - name: Install library
+              run: poetry install --no-interaction
+
+            - name: Code Quality flake8
+              run: poetry run flake8 django_querycache

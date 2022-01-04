@@ -62,7 +62,7 @@ class Area(MPTTModel):
     def delete(self):
         super(Area, self).delete()
 
-    def get_ancestor_at_level(self, level=2):
+    def get_ancestor_at_level(self, level=2) -> "Area":
         """Get the area ancestor at a given level
 
         Will travel the tree until it reaches the level or return self if already under that level"""
@@ -70,13 +70,13 @@ class Area(MPTTModel):
             return self
         return self.get_ancestors()[level]
 
-    def display_name_and_type(self):
+    def display_name_and_type(self) -> str:
         """Area name and type
 
         Example District of Bamako"""
-        return "%(type)s of %(area)s" % {"type": self.kind.name, "area": self.name}
+        return f"{self.kind.name} of {self.name}"
 
-    def display_with_parent(self):
+    def display_with_parent(self) -> str:
         """Print Area name and kind and parent name and kind
 
         Example: Aldeia of Baha-Neo in Suco of Lia Ruca"""
@@ -90,7 +90,7 @@ class Area(MPTTModel):
                 "parent": self.parent.display_name_and_type(),
             }
 
-    def __str__(self):
+    def __str__(self) -> str:
         """print Area name from its Kind and parent
 
         Example: Bamako"""
