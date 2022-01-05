@@ -2,7 +2,7 @@
 
 The common location package used for catalpa's projects. A hierarchical tree of geographical locations supporting location type and GIS data.
 
-# Admin
+## Admin
 
 The admin site is set up to use Modeltranslations (if available in the parent app)
 
@@ -25,6 +25,24 @@ pip-sync requirements.txt dev.txt
 pre-commit install
 ```
 
+### Pre Commit
+
+If `pre-commit` is installed your code will be checked before commit.
+This includes
+
+- black
+- flake8
+- isort
+- mypy
+
+The same checks are run on push. See `pytest.yaml` for details on the checks being run.
+
+### New Release
+
+For a new release, change the `version` property in pyproject.toml and push a git tag with the version number
+For instance at time of writing the version is `3.0.2` with the tag `v3.0.2`
+
+See `build.yaml` for details on release tagging
 ## Changelog
 
 - Version 3.0.1
@@ -57,23 +75,15 @@ pre-commit install
 - Version 2.72
   - optionally use django_extensions' ForeignKeyAutocompleteAdmin in admin interface
 
-## Uploading a new version to PyPi
 
-- install setuptools and twine
-- Bump `setup.py` to a new version
--
-- Create a git tag for this version: `git tag <version_number>`
-- Push the tag to github `git push origin <version_number>`
-- Upload the new version to PyPi: `python setup.py sdist upload`
+## Manually Uploading a new version to PyPi
 
-If you have pipenv:
+Bump `pyproject.toml`
+Then run `poetry build` and `poetry publish`
 
 ```bash
-pipenv install
-```
-
-```bash
-# bump pyproject.toml then:
 poetry build
 poetry publish
 ```
+
+See the file `build.yml` for the workflow
