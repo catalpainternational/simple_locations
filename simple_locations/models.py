@@ -1,4 +1,4 @@
-from django.contrib.gis.db.models import MultiPolygonField
+from django.contrib.gis.db.models import MultiPolygonField, LineStringField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
@@ -104,6 +104,19 @@ class Area(MPTTModel):
         #                                              'area': self.name,}
 
         return self.name
+
+
+class Border(models.Model):
+    """
+    Shared parts of border topologies are referenced
+    here in order to make a more efficient mapping layer.
+    When we do this we can greatly reduce the amount of data
+    sent to client (for PNG 'area' is 9.6M on-disk, 'lines' is 2.3M on-disk)
+    """
+    # srid could be 4326 or 3857. 3857 is easier for simplification
+    # because it's in meters; simplification in degrees is not fun.
+    geom = LineStringField(srid=3857)
+    area = models.ManyToManyField("Area")
 
 
 class AreaProfile(DateStampedModel):
