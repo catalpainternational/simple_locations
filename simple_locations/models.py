@@ -1,4 +1,6 @@
-from django.contrib.gis.db.models import MultiPolygonField, LineStringField
+from django.contrib.gis.db.models import LineStringField, MultiPolygonField
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
@@ -51,10 +53,7 @@ class Area(MPTTModel):
         order_insertion_by = ["name"]
 
     name = models.CharField(max_length=100)
-    code = models.CharField(
-        max_length=50,
-        unique=True
-    )  # was CodeField
+    code = models.CharField(max_length=50, unique=True)  # was CodeField
     kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
     location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
@@ -106,6 +105,14 @@ class Area(MPTTModel):
         return self.name
 
 
+class BorderManager(models.Manager):
+    def populate_area_ids_types(self):
+        instances = Border.objects.annotate(area_ids_=ArrayAgg("area"), area_types_=ArrayAgg("area__kind_id"))
+        for i in instances:
+            i.area_ids = i.area_ids_
+            i.area_types = i.area_types_
+
+
 class Border(models.Model):
     """
     Shared parts of border topologies are referenced
@@ -113,10 +120,18 @@ class Border(models.Model):
     When we do this we can greatly reduce the amount of data
     sent to client (for PNG 'area' is 9.6M on-disk, 'lines' is 2.3M on-disk)
     """
+
     # srid could be 4326 or 3857. 3857 is easier for simplification
     # because it's in meters; simplification in degrees is not fun.
     geom = LineStringField(srid=3857)
     area = models.ManyToManyField("Area")
+
+    # The following fields are denormalised in order to
+    # simplify generting and filtering vector data
+    area_ids = ArrayField(models.IntegerField(), default=list)
+    area_types = ArrayField(models.IntegerField(), default=list)
+
+    objects = BorderManager()
 
 
 class AreaProfile(DateStampedModel):
