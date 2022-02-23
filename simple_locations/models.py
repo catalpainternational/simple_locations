@@ -1,4 +1,5 @@
 from django.contrib.gis.db.models import LineStringField, MultiPolygonField
+from django.contrib.gis.db.models.functions import Transform
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -107,10 +108,34 @@ class Area(MPTTModel):
 
 class BorderManager(models.Manager):
     def populate_area_ids_types(self):
-        instances = Border.objects.annotate(area_ids_=ArrayAgg("area"), area_types_=ArrayAgg("area__kind_id"))
+        for id, area_ids in self.annotate(area_ids_=ArrayAgg("area", distinct=True)).values_list("pk", "area_ids_"):
+            instance = self.get(pk=id)
+            instance.area_ids = area_ids
+            print(area_ids)
+            instance.save()
+
+
+class ProjectedAreaManager(models.Manager):
+    def populate(self):
+        instances = Area.objects.annotate(geom_3857=Transform("geom", 3857))
         for i in instances:
-            i.area_ids = i.area_ids_
-            i.area_types = i.area_types_
+            proj_area = ProjectedArea.objects.get_or_create(area=i)[0]
+            proj_area.geom = i.geom_3857
+            proj_area.save()
+
+
+class ProjectedArea(models.Model):
+    """
+    Projected "area" instances in the common web mercator (3857)
+    This allows for correctly indexed spatial queries against data which is
+    in that coordinates system when ingested.
+    Most commonly this would be OSM data
+    """
+
+    geom = MultiPolygonField(null=True, blank=True, srid=3857)
+    area = models.OneToOneField("Area", on_delete=models.CASCADE)
+
+    objects = ProjectedAreaManager()
 
 
 class Border(models.Model):
