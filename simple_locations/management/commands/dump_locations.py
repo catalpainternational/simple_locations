@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         print("id\tname\ttype\tparent_id\tparent_name\tparent_type")
-        for a in Area.tree.all():
+        for a in Area.objects.all():
             print(
                 "%d\t%s\t%s\t%d\t%s\t%s"
                 % (
