@@ -1,4 +1,5 @@
-from django.contrib.gis.db.models import MultiPolygonField
+from django.contrib.gis.db.models import LineStringField, MultiPolygonField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
@@ -101,6 +102,37 @@ class Area(MPTTModel):
         #                                              'area': self.name,}
 
         return self.name
+
+
+class ProjectedArea(models.Model):
+    """
+    Projected "area" instances in the common web mercator (3857)
+    This allows for correctly indexed spatial queries against data which is
+    in that coordinates system when ingested.
+    Most commonly this would be OSM data
+    """
+
+    geom = MultiPolygonField(null=True, blank=True, srid=3857)
+    area = models.OneToOneField("Area", on_delete=models.CASCADE)
+
+
+class Border(models.Model):
+    """
+    Shared parts of border topologies are referenced
+    here in order to make a more efficient mapping layer.
+    When we do this we can greatly reduce the amount of data
+    sent to client (for PNG 'area' is 9.6M on-disk, 'lines' is 2.3M on-disk)
+    """
+
+    # srid could be 4326 or 3857. 3857 is easier for simplification
+    # because it's in meters; simplification in degrees is not fun.
+    geom = LineStringField(srid=3857)
+    area = models.ManyToManyField("Area")
+
+    # The following fields are denormalised in order to
+    # simplify generting and filtering vector data
+    area_ids = ArrayField(models.IntegerField(), default=list)
+    area_types = ArrayField(models.IntegerField(), default=list)
 
 
 class AreaProfile(DateStampedModel):

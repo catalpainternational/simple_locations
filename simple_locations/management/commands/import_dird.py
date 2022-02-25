@@ -8,7 +8,7 @@ from typing import Any, List, NamedTuple
 from warnings import warn
 
 from django.contrib.gis.db.models import Union
-from django.contrib.gis.gdal.datasource import DataSource
+from django.contrib.gis.gdal import DataSource  # type: ignore
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError

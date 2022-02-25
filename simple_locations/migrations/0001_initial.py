@@ -7,7 +7,8 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = []  # type: List[Tuple[str, str]]
+    dependencies = [
+    ]  # type: List[Tuple[str, str]]
 
     operations = [
         migrations.CreateModel(

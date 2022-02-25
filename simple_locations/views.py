@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from django.views.decorators.cache import cache_control
 from mptt.exceptions import InvalidMove
@@ -17,8 +17,9 @@ def simple_locations(request):
     firefox likes to aggressively cache forms set cache control to false to override this
     """
     form = LocationForm()
-    nodes = Area.tree.all()
-    return render_to_response(
+    nodes = Area.objects.all()
+    return render(
+        request,
         "simple_locations/index.html",
         {
             "form": form,
@@ -30,7 +31,7 @@ def simple_locations(request):
 
 
 def add_location(req, parent_id=None):
-    nodes = Area.tree.all()
+    nodes = Area.objects.all()
 
     if req.method == "POST":
         form = LocationForm(req.POST)
@@ -54,14 +55,16 @@ def add_location(req, parent_id=None):
             area.save()
             form = LocationForm()
 
-            return render_to_response(
+            return render(
+                req,
                 "simple_locations/location_edit.html",
                 {"form": form, "nodes": nodes},
                 context_instance=RequestContext(req),
             )
         else:
             form = LocationForm(req.POST)
-            return render_to_response(
+            return render(
+                req,
                 "simple_locations/location_edit.html",
                 {"form": form, "nodes": nodes},
                 context_instance=RequestContext(req),
@@ -79,7 +82,8 @@ def add_location(req, parent_id=None):
         else:
             form = LocationForm()
 
-    return render_to_response(
+    return render(
+        req,
         "simple_locations/location_edit.html",
         {"form": form, "nodes": nodes},
         context_instance=RequestContext(req),
@@ -127,20 +131,23 @@ def edit_location(req, area_id):
 
             if saved:
                 form = LocationForm()
-                return render_to_response(
+                return render(
+                    req,
                     "simple_locations/location_edit.html",
-                    {"form": form, "nodes": Area.tree.all()},
+                    {"form": form, "nodes": Area.objects.all()},
                     context_instance=RequestContext(req),
                 )
             else:
-                return render_to_response(
+                return render(
+                    req,
                     "simple_locations/location_edit.html",
-                    {"form": form, "item": location, "nodes": Area.tree.all()},
+                    {"form": form, "item": location, "nodes": Area.objects.all()},
                     context_instance=RequestContext(req),
                 )
 
         else:
-            return render_to_response(
+            return render(
+                req,
                 "simple_locations/location_edit.html",
                 {"form": form, "item": location},
                 context_instance=RequestContext(req),
@@ -160,9 +167,10 @@ def edit_location(req, area_id):
             default_data["lat"] = location.location.latitude
             default_data["lon"] = location.location.longitude
         form = LocationForm(default_data)
-        return render_to_response(
+        return render(
+            req,
             "simple_locations/location_edit.html",
-            {"form": form, "nodes": Area.tree.all(), "item": location},
+            {"form": form, "nodes": Area.objects.all(), "item": location},
             context_instance=RequestContext(req),
         )
 
@@ -177,8 +185,8 @@ def delete_location(request, area_id):
 
 @cache_control(no_cache=True)
 def render_location(request):
-    nodes = Area.tree.all()
-    return render_to_response("simple_locations/treepanel.html", {"nodes": nodes})
+    nodes = Area.objects.all()
+    return render(request, "simple_locations/treepanel.html", {"nodes": nodes})
 
 
 def area_search(request):
