@@ -14,7 +14,7 @@ exclude = '''
   | \.venv
   | env
   | migrations
-)
+)/
 '''
 
 [tool.poetry]
