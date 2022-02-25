@@ -1,6 +1,4 @@
 from django.contrib.gis.db.models import LineStringField, MultiPolygonField
-from django.contrib.gis.db.models.functions import Transform
-from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
@@ -106,24 +104,6 @@ class Area(MPTTModel):
         return self.name
 
 
-class BorderManager(models.Manager):
-    def populate_area_ids_types(self):
-        for id, area_ids in self.annotate(area_ids_=ArrayAgg("area", distinct=True)).values_list("pk", "area_ids_"):
-            instance = self.get(pk=id)
-            instance.area_ids = area_ids
-            print(area_ids)
-            instance.save()
-
-
-class ProjectedAreaManager(models.Manager):
-    def populate(self):
-        instances = Area.objects.annotate(geom_3857=Transform("geom", 3857))
-        for i in instances:
-            proj_area = ProjectedArea.objects.get_or_create(area=i)[0]
-            proj_area.geom = i.geom_3857
-            proj_area.save()
-
-
 class ProjectedArea(models.Model):
     """
     Projected "area" instances in the common web mercator (3857)
@@ -134,8 +114,6 @@ class ProjectedArea(models.Model):
 
     geom = MultiPolygonField(null=True, blank=True, srid=3857)
     area = models.OneToOneField("Area", on_delete=models.CASCADE)
-
-    objects = ProjectedAreaManager()
 
 
 class Border(models.Model):
@@ -155,8 +133,6 @@ class Border(models.Model):
     # simplify generting and filtering vector data
     area_ids = ArrayField(models.IntegerField(), default=list)
     area_types = ArrayField(models.IntegerField(), default=list)
-
-    objects = BorderManager()
 
 
 class AreaProfile(DateStampedModel):
