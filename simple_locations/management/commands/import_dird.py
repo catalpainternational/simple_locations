@@ -8,7 +8,7 @@ from typing import Any, List, NamedTuple
 from warnings import warn
 
 from django.contrib.gis.db.models import Union
-from django.contrib.gis.gdal import DataSource
+from django.contrib.gis.gdal import DataSource  # type: ignore
 from django.contrib.gis.geos import GEOSGeometry, MultiPolygon
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
@@ -56,7 +56,7 @@ class Command(BaseCommand):
         zip_url: str = "https://png-data.sprep.org/system/files/NSO_PNG%20Boundaries.zip",
     ):
 
-        with urllib.request.urlopen(zip_url) as response, tempfile.NamedTemporaryFile() as tmp_file:
+        with urllib.request.urlopen(zip_url) as response, tempfile.NamedTemporaryFile() as tmp_file:  # type: ignore
             shutil.copyfileobj(response, tmp_file)
             with zipfile.ZipFile(tmp_file) as tmpzip:
                 with tempfile.TemporaryDirectory() as tmpdirname:
