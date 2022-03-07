@@ -113,7 +113,7 @@ class ProjectedArea(models.Model):
     """
 
     geom = MultiPolygonField(null=True, blank=True, srid=3857)
-    area = models.OneToOneField("Area", on_delete=models.CASCADE)
+    area = models.OneToOneField("Area", primary_key=True, on_delete=models.CASCADE)
 
 
 class Border(models.Model):
