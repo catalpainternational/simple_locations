@@ -19,7 +19,7 @@ exclude = '''
 
 [tool.poetry]
 name = "simple-locations"
-version = "3.0.2"
+version = "3.1.2"
 description = "The common location package for Catalpa's projects"
 authors = [
   "Joshua Brooks <josh@catalpa.io>",
@@ -44,7 +44,7 @@ isort = "^5.9.3"
 pre-commit = "^2.15.0"
 mypy = "^0.931"
 django-stubs = "^1.9.0"
-psycopg2 = "2.8.4"
+psycopg2-binary = "2.8.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
