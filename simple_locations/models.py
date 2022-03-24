@@ -1,9 +1,72 @@
-from django.contrib.gis.db.models import LineStringField, MultiPolygonField
+from typing import Iterable, List, Optional, Type
+
+from django.contrib.gis.db.models import (
+    GeometryField,
+    LineStringField,
+    MultiPolygonField,
+)
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from mptt.models import MPTTModel
+
+
+def get_geom_field(model) -> GeometryField:
+    """
+    Returns the first field likely to be a geometry field
+    from a model
+    """
+    fields = model._meta.fields  # type: List
+    for field_ in fields:
+        if isinstance(field_, GeometryField):
+            return field_
+    raise KeyError(f"No geometry field could be identified for {model}")
+
+
+def intersects_areas(area_ids: Iterable[int], model: models.Model, geom_field: Optional[str] = None):
+    """
+    Return parameters for an 'extra' clause intersecting an area
+    This function uses SRID 3857 and the corresponding projected areas
+    for compatibility with osm import
+
+    This example - from DIRD's location profile airstrips:
+
+    >>> extra_clause = intersects_areas(Area.objects.values_list('id', flat=True), Airstrip)
+    >>> Airstrip.objects.extra(**extra_clause, Airstrip)
+
+    """
+
+    def _area_model(srid: int) -> Type[models.Model]:
+        """
+        Determine which model to apply the intersection to
+        based on the SRID
+        """
+        if srid == 4326:
+            return Area
+        elif srid == 3875:
+            return ProjectedArea
+        raise AssertionError("Unhandled SRID")
+
+    geom_field_instance = model._meta.get_field(geom_field) if geom_field else get_geom_field(model)
+
+    if not isinstance(geom_field_instance, GeometryField):
+        raise TypeError
+
+    geom_field_name: str = geom_field_instance.db_column or geom_field_instance.attname
+
+    area_query_values = ",".join(map(str, area_ids))
+    area_clause = f"""ANY ('{{{area_query_values}}}'::int[])"""
+
+    area_table_name = _area_model(geom_field_instance.srid)._meta.db_table
+
+    return dict(
+        tables=[area_table_name],
+        where=[
+            f'"{area_table_name}"."id" = {area_clause}',
+            f'ST_INTERSECTS("{area_table_name}"."geom", "{model._meta.db_table}"."{geom_field_name}")',
+        ],
+    )
 
 
 class DateStampedModel(models.Model):

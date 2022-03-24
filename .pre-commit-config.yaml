@@ -17,3 +17,7 @@ repos:
     hooks:
     - id: mypy
       name: mypy
+      additional_dependencies: [
+        django-stubs,
+        django-mptt
+      ]

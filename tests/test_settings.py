@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "mptt",
     "simple_locations",
+    "sl_tests",
 ]
 
 MIDDLEWARE = [
@@ -88,6 +89,7 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": "49156",
         "NAME": "dird_db",
+        "TEST": {"NAME": "simple_locations_test"},
     }
 }
 # Password validation
