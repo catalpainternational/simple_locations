@@ -44,7 +44,7 @@ def intersects_areas(area_ids: Iterable[int], model: models.Model, geom_field: O
         """
         if srid == 4326:
             return Area
-        elif srid == 3875:
+        elif srid == 3857:
             return ProjectedArea
         raise AssertionError("Unhandled SRID")
 
@@ -58,12 +58,14 @@ def intersects_areas(area_ids: Iterable[int], model: models.Model, geom_field: O
     area_query_values = ",".join(map(str, area_ids))
     area_clause = f"""ANY ('{{{area_query_values}}}'::int[])"""
 
-    area_table_name = _area_model(geom_field_instance.srid)._meta.db_table
+    area_model = _area_model(geom_field_instance.srid)
+    area_table_name = area_model._meta.db_table
+    area_table_pk = area_model._meta.pk.db_column or area_model._meta.pk.attname
 
     return dict(
         tables=[area_table_name],
         where=[
-            f'"{area_table_name}"."id" = {area_clause}',
+            f'"{area_table_name}"."{area_table_pk}" = {area_clause}',
             f'ST_INTERSECTS("{area_table_name}"."geom", "{model._meta.db_table}"."{geom_field_name}")',
         ],
     )
