@@ -40,10 +40,25 @@ The same checks are run on push. See `pytest.yaml` for details on the checks bei
 ### New Release
 
 For a new release, change the `version` property in pyproject.toml and push a git tag with the version number
-For instance at time of writing the version is `3.0.2` with the tag `v3.0.2`
+For instance at time of writing the version is `3.1.4` with the tag `v3.1.4`
 
 See `build.yaml` for details on release tagging
 ## Changelog
+
+- Version 3.1.4
+  - Migrating JSON views from openly
+
+- Version 3.1.3
+  - Added `intersects_area` function
+
+- Version 3.1.2
+  - Uses psycopg2-binary for development environment
+
+- Version 3.1.1
+  - Added "border" fields
+  - Added a model for "projected" areas in EPSG:3857
+  - Added commands for border generation and
+  - `./manage.py` and associated project code
 
 - Version 3.0.1
 
