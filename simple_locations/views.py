@@ -1,9 +1,11 @@
 from django.conf import settings
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from django.views.decorators.cache import cache_control
+from djgeojson.views import GeoJSONLayerView
 from mptt.exceptions import InvalidMove
 
 from simple_locations.models import Area, AreaType, Point
@@ -208,3 +210,31 @@ def area_search(request):
             areadetail["parentkind"] = area.parent.kind.name
         areadetails.append(areadetail)
     return HttpResponse(json.dumps(areadetails))
+
+
+class AreaJSONLayerView(GeoJSONLayerView):
+
+    precision = 3
+    simplify = 0.002
+
+    def get_queryset(self, *args, **kwargs):
+        areas = [i for i in self.request.GET.getlist("locations[]", []) if i.isnumeric()]
+        queryset = (
+            super(AreaJSONLayerView, self).get_queryset(*args, **kwargs).filter(Q(geom__isnull=False, pk__in=areas))
+        )
+        return queryset
+
+
+class ChildAreasJSONLayerView(GeoJSONLayerView):
+
+    precision = 3
+    simplify = 0.002
+
+    def get_queryset(self, *args, **kwargs):
+        area = self.kwargs.get("area", self.request.GET.get("area", 1))
+        queryset = (
+            super(ChildAreasJSONLayerView, self)
+            .get_queryset(*args, **kwargs)
+            .filter(Q(geom__isnull=False, parent_id=area))
+        )
+        return queryset
