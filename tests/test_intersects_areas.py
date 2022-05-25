@@ -1,9 +1,9 @@
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 
-from simple_locations.models import Area, intersects_areas
+from simple_locations.models import Area, intersects_areas  # type: ignore
 from sl_tests.models import WgsPoint
-from tests.factories import AreaFactory, WgsPointFactory
+from tests.factories import AreaFactory, WgsPointFactory  # type: ignore
 
 
 class IntersectsAreaTestCase(TestCase):
