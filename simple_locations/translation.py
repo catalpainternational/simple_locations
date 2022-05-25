@@ -11,6 +11,5 @@ class AreaTypeTranslations(TranslationOptions):
     fields = ("name",)
 
 
-
 translator.register(Area, AreaNameTranslations)
 translator.register(AreaType, AreaTypeTranslations)
