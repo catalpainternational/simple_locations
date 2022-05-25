@@ -1,7 +1,7 @@
-import factory
-import factory.fuzzy
+import factory  # type: ignore
+import factory.fuzzy  # type: ignore
 from django.contrib.gis.geos import MultiPolygon, Point, Polygon
-from factory.django import DjangoModelFactory
+from factory.django import DjangoModelFactory  # type: ignore
 
 from simple_locations.models import Area, AreaType
 from sl_tests.models import WgsPoint
