@@ -67,7 +67,7 @@ class AreaQueryset(models.QuerySet):
 
         output.write(prefix)
         is_first = True
-        for obj in self._annotate_geometries(simplify=simplify, quantize=quantize):
+        for obj in self.filter(geom__isnull=False)._annotate_geometries(simplify=simplify, quantize=quantize):
             if is_first:
                 is_first = False
             else:
