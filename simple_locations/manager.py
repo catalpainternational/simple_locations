@@ -1,6 +1,7 @@
 import io
-from django.db import models
+
 from django.contrib.gis.db.models.functions import AsGeoJSON
+from django.db import models
 from django.http import HttpResponse
 
 
