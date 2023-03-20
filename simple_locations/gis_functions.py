@@ -1,8 +1,9 @@
 from typing import List, Optional, TypeVar, Union
+
 from django.db import models
-from django.db.models import Func, F, Value
-from django.db.models.functions.comparison import JSONObject 
+from django.db.models import F, Func, Value
 from django.db.models.fields.json import JSONField
+from django.db.models.functions.comparison import JSONObject
 
 
 class Quantize(models.Func):

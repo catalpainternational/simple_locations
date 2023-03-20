@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Literal, Tuple, Union
+
 from pydantic import BaseModel, Field
 
 Coords = Tuple[float, float]

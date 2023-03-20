@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.postgres.aggregates.general import JSONBAgg
-from simple_locations.schemas import FeatureCollection
+
 from simple_locations.gis_functions import JsonFeature
+from simple_locations.schemas import Feature, FeatureCollection
 
 
 class FeatureQueryset(models.QuerySet):
@@ -27,23 +27,9 @@ class FeatureQueryset(models.QuerySet):
         >>> # A FeatureCollection:
         >>> FeatureCollection.parse_obj(queryset.aggregate(features = JSONBAgg(JsonFeature())))
         """
-        return FeatureCollection.parse_obj(
-            self.aggregate(
-                features=JSONBAgg(
-                    JsonFeature(
-                        simplify=simplify,
-                        quantize=quantize,
-                        # The following fields become "properties"
-                        id=models.F("id"),
-                        parent=models.F("parent"),
-                        code=models.F("code"),
-                        name=models.F("name"),
-                    )
-                )
-            )
-        )
+        return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
-    def to_features(self, simplify: float = 1e-3, quantize: int = 5):
+    def annotate_features(self, simplify: float = 1e-3, quantize: int = 5):
         """
         Annotated 'feature' fields onto the queryset
         """
@@ -59,6 +45,14 @@ class FeatureQueryset(models.QuerySet):
             )
         )
 
+    def to_features(self, simplify: float = 1e-3, quantize: int = 5):
+        """
+        Generate features
+        """
+        return (
+            Feature.construct(**area.feature) for area in self.annotate_features(simplify=simplify, quantize=quantize)
+        )
+
 
 class FeatureManager(models.Manager):
     def get_queryset(self):
@@ -66,3 +60,6 @@ class FeatureManager(models.Manager):
 
     def to_features(self, simplify: float = 1e-3, quantize: int = 5):
         return self.get_queryset().to_features(simplify=simplify, quantize=quantize)
+
+    def to_featurecollection(self, simplify: float = 1e-3, quantize: int = 5) -> FeatureCollection:
+        return self.get_queryset().to_featurecollection(simplify=simplify, quantize=quantize)

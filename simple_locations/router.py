@@ -1,6 +1,8 @@
 from typing import List
+
 from ninja import Router
-from simple_locations import schemas, model_schemas, models
+
+from simple_locations import model_schemas, models, schemas
 
 router = Router(tags=["SimpleLocations"])
 

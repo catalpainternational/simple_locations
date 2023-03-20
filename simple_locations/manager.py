@@ -3,6 +3,7 @@ import io
 from django.contrib.gis.db.models.functions import AsGeoJSON
 from django.db import models
 from django.http import HttpResponse
+
 from simple_locations.gis_functions import Multi, Quantize, Simplify
 
 

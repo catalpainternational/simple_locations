@@ -11,8 +11,8 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from mptt.models import MPTTModel
 
-from simple_locations.manager import AreaQueryset
 from simple_locations.feature_manager import FeatureManager
+from simple_locations.manager import AreaQueryset
 
 
 def get_geom_field(model) -> GeometryField:
