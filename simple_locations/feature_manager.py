@@ -50,7 +50,7 @@ class FeatureQueryset(models.QuerySet):
         Generate features
         """
         return (
-            Feature.construct(**area.feature) for area in self.annotate_features(simplify=simplify, quantize=quantize)
+            Feature(**area.feature) for area in self.annotate_features(simplify=simplify, quantize=quantize)
         )
 
 
