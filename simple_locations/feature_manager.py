@@ -1,3 +1,4 @@
+from typing import Union
 from django.db import models
 
 from simple_locations.gis_functions import JsonFeature
@@ -5,7 +6,7 @@ from simple_locations.schemas import Feature, FeatureCollection
 
 
 class FeatureQueryset(models.QuerySet):
-    def to_featurecollection(self, simplify: float = 1e-3, quantize: int = 5) -> FeatureCollection:
+    def to_featurecollection(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None) -> FeatureCollection:
         """
         GeoJSON Feature builder
         =======================
@@ -29,7 +30,7 @@ class FeatureQueryset(models.QuerySet):
         """
         return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
-    def annotate_features(self, simplify: float = 1e-3, quantize: int = 5):
+    def annotate_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
         """
         Annotated 'feature' fields onto the queryset
         """
@@ -45,7 +46,7 @@ class FeatureQueryset(models.QuerySet):
             )
         )
 
-    def to_features(self, simplify: float = 1e-3, quantize: int = 5):
+    def to_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
         """
         Generate features
         """
@@ -58,8 +59,8 @@ class FeatureManager(models.Manager):
     def get_queryset(self):
         return FeatureQueryset(self.model, using=self._db)
 
-    def to_features(self, simplify: float = 1e-3, quantize: int = 5):
+    def to_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
         return self.get_queryset().to_features(simplify=simplify, quantize=quantize)
 
-    def to_featurecollection(self, simplify: float = 1e-3, quantize: int = 5) -> FeatureCollection:
+    def to_featurecollection(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None) -> FeatureCollection:
         return self.get_queryset().to_featurecollection(simplify=simplify, quantize=quantize)
