@@ -29,7 +29,8 @@ def area_id(request, area_id: int):
     Returns the geometry of a single Area
     as a single GeoJSON Feature
     """
-    return schemas.Feature.parse_obj(models.Area.geofunctions.filter(pk=area_id).to_features().first().feature)
+    features = models.Area.features.filter(pk=area_id).to_features()
+    return schemas.Feature.parse_obj(next(features))
 
 
 @router.get("/area/by-parent/{area_id}.geojson", response=schemas.FeatureCollection)
@@ -37,7 +38,7 @@ def area_children(request, area_id: int):
     """
     Returns the direct descendants of a given Area as a FeatureCollection
     """
-    return models.Area.geofunctions.filter(parent=area_id).to_featurecollection()
+    return models.Area.features.filter(parent=area_id).to_featurecollection()
 
 
 @router.get("/area/by-type/{area_type}.geojson", response=schemas.FeatureCollection)
@@ -45,4 +46,4 @@ def area_type(request, area_type: str):
     """
     Returns all areas of a given type
     """
-    return models.Area.geofunctions.filter(kind__slug=area_type).to_featurecollection()
+    return models.Area.features.filter(kind__slug=area_type).to_featurecollection()
