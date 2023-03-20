@@ -33,7 +33,7 @@ class MultiPolygon(BaseModel):
 class Feature(BaseModel):
     type: Literal["Feature"] = "Feature"
     geometry: Union[Point, MultiPoint, Polygon, MultiPolygon] = Field(..., discriminator="type")
-    id: any 
+    id: Union[str, int] 
     properties: Dict[str, Any]
 
 
