@@ -8,6 +8,7 @@ from mptt.models import MPTTModel
 class DateStampedModel(models.Model):
     date_created: date
     date_modified: date
+
     class Meta:
         abstract: bool
 
@@ -33,6 +34,7 @@ class Area(MPTTModel):
         verbose_name: str
         verbose_name_plural: str
         app_label: str
+
     class MPTTMeta:
         parent_attr: str
         order_insertion_by: Any
