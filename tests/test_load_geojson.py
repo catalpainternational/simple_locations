@@ -3,7 +3,7 @@ import json
 from django.test import TestCase
 
 from simple_locations.models import Area
-from tests.factories import AreaFactory
+from tests.factories import AreaFactory  # type: ignore
 
 
 class GeoJsonTestCase(TestCase):

@@ -381,7 +381,10 @@ files = [
 [package.dependencies]
 django = "*"
 django-stubs-ext = ">=0.8.0"
-mypy = ">=0.980"
+mypy = [
+    {version = ">=0.980"},
+    {version = ">=1.1.1,<1.2", optional = true, markers = "extra == \"compatible-mypy\""},
+]
 tomli = "*"
 types-pytz = "*"
 types-PyYAML = "*"
@@ -1343,4 +1346,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "6596cc0d4271dfbfb1c07baf512006f4c369aab036b38527d724d98ca313094b"
+content-hash = "93a0fa3556d046475339a748b87deaff4685a41d07b4db2c6c308c895f868f7c"

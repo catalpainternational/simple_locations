@@ -48,7 +48,7 @@ flake8 = "*"
 isort = "*"
 pre-commit = "*"
 mypy = "*"
-django-stubs = "*"
+django-stubs = {extras = ["compatible-mypy"], version = "^1.16.0"}
 psycopg2-binary = "*"
 pytest-django = "*"
 pytest-cov = "*"
@@ -68,4 +68,10 @@ django_settings_module = "tests.test_settings"
 module = "setuptools"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "tests.factories"
+ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "factory"
+ignore_missing_imports = true
