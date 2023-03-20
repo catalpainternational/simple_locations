@@ -2,9 +2,9 @@ name: Python
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main]
+    branches: [ main, dev ]
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: "3.8"
         cache: "poetry"
-    - run: poetry install --with dev
+    - run: poetry install --with dev --no-root
 
     - name: Lint with flake8
       if: always()
