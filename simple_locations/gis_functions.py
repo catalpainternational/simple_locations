@@ -1,8 +1,8 @@
-from typing import Optional, TypeVar
+from typing import List, Optional, TypeVar, Union
 from django.db import models
-from django.db.models.functions import JSONObject
+from django.db.models import Func, F, Value
+from django.db.models.functions.comparison import JSONObject 
 from django.db.models.fields.json import JSONField
-from django.db.models import Value
 
 
 class Quantize(models.Func):
@@ -76,10 +76,10 @@ class JsonFeature(models.Func):
         include_id_field: Optional[bool] = True,
         **fields,
     ):
-        expressions = []
+        expressions: List[Union[Value, F, Func]] = []
         if include_id_field:
             expressions.extend((Value("id"), models.F("pk")))
-        g = models.F(geom_field)
+        g: Union[F, Func] = models.F(geom_field)
         if simplify:
             g = SimplifyPreserve(g, simplify=simplify)
         if quantize:
