@@ -43,6 +43,7 @@ class FeatureQueryset(models.QuerySet):
                 parent=models.F("parent"),
                 code=models.F("code"),
                 name=models.F("name"),
+                kind=models.F("kind__name")
             )
         )
 
