@@ -3,7 +3,6 @@ from django.db import connection
 
 
 class Scripts:
-
     populate_simple_locations_projectedarea = """
         TRUNCATE simple_locations_projectedarea;
         INSERT INTO simple_locations_projectedarea (geom, area_id)

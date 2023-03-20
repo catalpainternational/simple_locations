@@ -3,7 +3,6 @@ from django.db import connection
 
 
 class Scripts:
-
     init_topology = """
         -- Note:
 
@@ -140,7 +139,6 @@ class Command(BaseCommand):
         # parser.add_argument('sample', nargs='+')
 
     def handle(self, *args, **options):
-
         with connection.cursor() as c:
             self.stdout.write(self.style.SUCCESS(Scripts.init_topology))
             c.execute(Scripts.init_topology)

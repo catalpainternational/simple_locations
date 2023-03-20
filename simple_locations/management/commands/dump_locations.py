@@ -4,7 +4,6 @@ from simple_locations.models import Area
 
 
 class Command(BaseCommand):
-
     help = """prints all districts in a form that's easy to import into excel"""
 
     def handle(self, **options):
