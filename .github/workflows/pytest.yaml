@@ -26,6 +26,11 @@ jobs:
       run: |
         poetry run flake8 .
 
+    - name: Install OS level dependencies
+      run: |
+          sudo apt-get update
+          sudo apt-get install binutils libproj-dev gdal-bin python3-psycopg2
+
     - name: Test with pytest
       if: always()
       run: poetry run pytest
