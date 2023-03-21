@@ -1,4 +1,5 @@
 from typing import Union
+
 from django.db import models
 
 from simple_locations.gis_functions import JsonFeature
@@ -6,7 +7,9 @@ from simple_locations.schemas import Feature, FeatureCollection
 
 
 class FeatureQueryset(models.QuerySet):
-    def to_featurecollection(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None) -> FeatureCollection:
+    def to_featurecollection(
+        self, simplify: Union[float, None] = None, quantize: Union[int, None] = None
+    ) -> FeatureCollection:
         """
         GeoJSON Feature builder
         =======================
@@ -30,7 +33,7 @@ class FeatureQueryset(models.QuerySet):
         """
         return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
-    def annotate_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
+    def annotate_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
         """
         Annotated 'feature' fields onto the queryset
         """
@@ -43,25 +46,25 @@ class FeatureQueryset(models.QuerySet):
                 parent=models.F("parent"),
                 code=models.F("code"),
                 name=models.F("name"),
-                kind=models.F("kind__name")
+                kind=models.F("kind__name"),
             )
         )
 
-    def to_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
+    def to_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
         """
         Generate features
         """
-        return (
-            Feature(**area.feature) for area in self.annotate_features(simplify=simplify, quantize=quantize)
-        )
+        return (Feature(**area.feature) for area in self.annotate_features(simplify=simplify, quantize=quantize))
 
 
 class FeatureManager(models.Manager):
     def get_queryset(self):
         return FeatureQueryset(self.model, using=self._db)
 
-    def to_features(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None):
+    def to_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
         return self.get_queryset().to_features(simplify=simplify, quantize=quantize)
 
-    def to_featurecollection(self, simplify: Union[float, None]=None, quantize: Union[int, None]=None) -> FeatureCollection:
+    def to_featurecollection(
+        self, simplify: Union[float, None] = None, quantize: Union[int, None] = None
+    ) -> FeatureCollection:
         return self.get_queryset().to_featurecollection(simplify=simplify, quantize=quantize)

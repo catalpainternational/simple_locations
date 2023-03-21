@@ -1,10 +1,9 @@
 import itertools
 
-
 from django.db.models import QuerySet
 from django.test import TestCase
 
-from simple_locations.gis_functions import JsonFeature
+from simple_locations.gis_functions import AsGeoJson, JsonFeature
 from simple_locations.models import Area
 from simple_locations.schemas import Feature, FeatureCollection
 from tests.factories import AreaFactory  # type: ignore
@@ -14,6 +13,13 @@ class FeatureManagerTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.area = AreaFactory()
+
+    def test_as_geojson(self):
+        """
+        Test our JSON wrapped function
+        """
+        queryset: QuerySet[Area] = Area.objects.all()
+        queryset = queryset.annotate(geometry=AsGeoJson("geom", bbox=True, crs=True, precision=6))
 
     def test_features(self):
         """
