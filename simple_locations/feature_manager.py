@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Generator, Iterable, Union
 
 from django.db import models
 
@@ -50,7 +50,9 @@ class FeatureQueryset(models.QuerySet):
             )
         )
 
-    def to_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
+    def to_features(
+        self, simplify: Union[float, None] = None, quantize: Union[int, None] = None
+    ) -> Generator[Feature, None, None]:
         """
         Generate features
         """

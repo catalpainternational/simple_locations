@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Generator, Iterable, List, Tuple
 
 from ninja import Router
 
@@ -31,7 +31,7 @@ def area_id(request, area_id: int):
     Returns the geometry of a single Area
     as a single GeoJSON Feature
     """
-    features = models.Area.features.filter(pk=area_id).to_features()
+    features: Generator[schemas.Feature, None, None] = models.Area.features.filter(pk=area_id).to_features()
     return schemas.Feature.parse_obj(next(features))
 
 

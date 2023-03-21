@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from mptt.models import MPTTModel
 
-from simple_locations.feature_manager import FeatureManager
+from simple_locations.feature_manager import FeatureQueryset
 from simple_locations.manager import AreaQueryset
 
 
@@ -161,7 +161,7 @@ class Area(MPTTModel):
         return self.name
 
     geofunctions = AreaQueryset.as_manager()
-    features = FeatureManager()
+    features = FeatureQueryset.as_manager()
 
 
 class ProjectedArea(models.Model):

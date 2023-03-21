@@ -86,8 +86,8 @@ class JsonFeature(models.Func):
         # Additional fields for "ST_AsGeoJson"
         # include bbox, crs, precision
         # These are sufffixed with `_` to distinguish them from `fields`
-        bbox_: Optional[bool] = False,
-        crs_: Optional[bool] = False,
+        bbox_: bool = False,
+        crs_: bool = False,
         precision_: int = 6,
         # Properties ('fields' or 'annotations' on the model)
         # which will become part of the GIS "properties" dict

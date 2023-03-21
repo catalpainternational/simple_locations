@@ -5,7 +5,7 @@ from typing import Any, Optional
 from django.db import models
 from mptt.models import MPTTModel
 
-from simple_locations.feature_manager import FeatureManager
+from simple_locations.feature_manager import FeatureQueryset
 
 class DateStampedModel(models.Model):
     date_created: date
@@ -53,7 +53,7 @@ class Area(MPTTModel):
     def get_ancestor_at_level(self, level: int = ...) -> Area: ...
     def display_name_and_type(self): ...
     def display_with_parent(self): ...
-    features: FeatureManager
+    features: FeatureQueryset
 
 class AreaProfile(DateStampedModel):
     area: Any
