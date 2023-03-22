@@ -1,4 +1,4 @@
-from typing import Generator, Iterable, List, Tuple
+from typing import Generator, List, Tuple
 
 from ninja import Router
 

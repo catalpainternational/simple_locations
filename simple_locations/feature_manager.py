@@ -1,4 +1,4 @@
-from typing import Generator, Iterable, Union
+from typing import Generator, Union
 
 from django.db import models
 
