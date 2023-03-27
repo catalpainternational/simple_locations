@@ -1,5 +1,6 @@
 from django.urls import path
 
+from simple_locations.api import api
 from simple_locations.models import Area
 from simple_locations.views import (
     AreaJSONLayerView,
@@ -32,4 +33,5 @@ urlpatterns = [
         ChildAreasJSONLayerView.as_view(model=Area, properties=("name", "id", "code", "parent_id")),
         name="children",
     ),
+    path("api/", api.urls),
 ]

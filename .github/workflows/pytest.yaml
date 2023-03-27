@@ -2,9 +2,9 @@ name: Python
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main]
+    branches: [ main, dev ]
 
 jobs:
   build:
@@ -19,12 +19,17 @@ jobs:
       with:
         python-version: "3.8"
         cache: "poetry"
-    - run: poetry install --with dev
+    - run: poetry install --with dev --no-root
 
     - name: Lint with flake8
       if: always()
       run: |
         poetry run flake8 .
+
+    - name: Install OS level dependencies
+      run: |
+          sudo apt-get update
+          sudo apt-get install binutils libproj-dev gdal-bin python3-psycopg2
 
     - name: Test with pytest
       if: always()
@@ -37,3 +42,23 @@ jobs:
     - name: Test with black
       if: always()
       run: poetry run black --check .
+
+    # Service containers to run postgres
+    services:
+        # Label used to access the service container
+        postgres:
+            # Docker Hub image
+            image: postgis/postgis:15-3.3
+            # Provide the password for postgres. Should be sync'ed with test_settings file
+            env:
+                POSTGRES_USER: dird
+                POSTGRES_PASSWORD: dird
+                POSTGRES_DBNAME: dird_db
+            # Set health checks to wait until postgres has started
+            options: >-
+                --health-cmd pg_isready
+                --health-interval 10s
+                --health-timeout 5s
+                --health-retries 5
+            ports:
+                - 49156:5432

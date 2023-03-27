@@ -213,7 +213,6 @@ def area_search(request):
 
 
 class AreaJSONLayerView(GeoJSONLayerView):
-
     precision = 3
     simplify = 0.002
 
@@ -226,7 +225,6 @@ class AreaJSONLayerView(GeoJSONLayerView):
 
 
 class ChildAreasJSONLayerView(GeoJSONLayerView):
-
     precision = 3
     simplify = 0.002
 

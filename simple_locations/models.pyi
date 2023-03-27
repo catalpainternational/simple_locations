@@ -5,9 +5,12 @@ from typing import Any, Optional
 from django.db import models
 from mptt.models import MPTTModel
 
+from simple_locations.feature_manager import FeatureQueryset
+
 class DateStampedModel(models.Model):
     date_created: date
     date_modified: date
+
     class Meta:
         abstract: bool
 
@@ -33,6 +36,7 @@ class Area(MPTTModel):
         verbose_name: str
         verbose_name_plural: str
         app_label: str
+
     class MPTTMeta:
         parent_attr: str
         order_insertion_by: Any
@@ -49,6 +53,7 @@ class Area(MPTTModel):
     def get_ancestor_at_level(self, level: int = ...) -> Area: ...
     def display_name_and_type(self): ...
     def display_with_parent(self): ...
+    features: FeatureQueryset
 
 class AreaProfile(DateStampedModel):
     area: Any

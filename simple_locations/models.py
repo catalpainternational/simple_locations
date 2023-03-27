@@ -11,6 +11,7 @@ from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 from mptt.models import MPTTModel
 
+from simple_locations.feature_manager import FeatureQueryset
 from simple_locations.manager import AreaQueryset
 
 
@@ -157,20 +158,10 @@ class Area(MPTTModel):
             }
 
     def __str__(self) -> str:
-        """print Area name from its Kind and parent
-
-        Example: Bamako"""
-
-        # don't add-in kind if kind name is already part of name.
-        # if (not self.parent) or (not self.kind) or self.name.startswith(self.kind.name):
-        #    return self.name
-        # else:
-        #    return _(u"%(type)s of %(area)s.") % {'type': self.kind.name, \
-        #                                              'area': self.name,}
-
         return self.name
 
     geofunctions = AreaQueryset.as_manager()
+    features = FeatureQueryset.as_manager()
 
 
 class ProjectedArea(models.Model):

@@ -41,7 +41,6 @@ area_definition_set = {
 
 
 class Command(BaseCommand):
-
     help = """Import data from NSO PNG Boundaries zip file"""
 
     def handle(self, *args: Any, **options: Any):
@@ -55,7 +54,6 @@ class Command(BaseCommand):
         self,
         zip_url: str = "https://png-data.sprep.org/system/files/NSO_PNG%20Boundaries.zip",
     ):
-
         with urllib.request.urlopen(zip_url) as response, tempfile.NamedTemporaryFile() as tmp_file:  # type: ignore
             shutil.copyfileobj(response, tmp_file)
             with zipfile.ZipFile(tmp_file) as tmpzip:
@@ -66,7 +64,6 @@ class Command(BaseCommand):
     def import_directory(self, tmpdirname: str):
         self.stderr.write(self.style.NOTICE("Importing shapes"))
         for filename in [f for f in os.listdir(tmpdirname) if f.endswith(".shp")]:
-
             area_definition = area_definition_set[filename]
             area_type = AreaType.objects.get_or_create(
                 name=area_definition["areatype"],
@@ -82,7 +79,6 @@ class Command(BaseCommand):
             )
 
     def import_shp(self, shape_path: Path, area_type: AreaType, field_mapping: dict) -> None:
-
         for feature in DataSource(str(shape_path))[0]:
             self.import_feature(feature=feature, area_type=area_type, field_mapping=field_mapping)
 
@@ -138,7 +134,6 @@ class Command(BaseCommand):
             d.save()
 
     def rebuild_tree(self):
-
         self.stderr.write(self.style.SUCCESS("Reset Area parent code"))
         for a in Area.objects.exclude(kind__name__in=["country", "province"]):
             try:
@@ -152,7 +147,6 @@ class Command(BaseCommand):
         Area.objects.rebuild()
 
     def perform_rename(self):
-
         sources = """Abau District	Abau District
         Aitape-Lumi District	Aitape/Lumi District
         Alotau District	Alotau District

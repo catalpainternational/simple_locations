@@ -1,0 +1,5 @@
+# This is here for compatibility with `pip-compile` projects submoduling this repo
+django-geojson
+django-mptt
+pydantic
+django
