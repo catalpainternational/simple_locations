@@ -186,7 +186,7 @@ class Border(models.Model):
 
     # srid could be 4326 or 3857. 3857 is easier for simplification
     # because it's in meters; simplification in degrees is not fun.
-    geom = LineStringField(srid=3857)
+    geom = LineStringField(srid=4326)
     area = models.ManyToManyField("Area")
 
     # The following fields are denormalised in order to
@@ -245,3 +245,9 @@ class AreaIndicator(DateStampedModel):
     # Define parameters for the measurement.
     # For example: {Gender: "Male", age_range: [0,16], is_smoker: no}
     dimensions = models.JSONField(help_text=_("A category used for disaggregating the result by gender, age, etc."))
+
+
+class Topology(models.Model):
+    
+    class Meta:
+        managed = False

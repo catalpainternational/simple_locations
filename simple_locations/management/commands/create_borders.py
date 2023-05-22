@@ -1,14 +1,20 @@
 from django.core.management.base import BaseCommand
 from django.db import connection
 
+SRID = 4326
+TOPO_SCHEMA = "ma_topo"
+PREC = 1e-6
+TOPOLOGY_TABLE = 'simple_locations_topology'
+TOPO_FIELD = "topo"
+GEOM_TYPE = 'POLYGON'
 
 class Scripts:
-    init_topology = """
+    init_topology = f"""
         -- Note:
 
         -- You may need to run the following SQL:
 
-        -- CREATE EXTENSION postgis_topology;
+        -- CREATE EXTENSION IF NOT EXISTS postgis_topology;
         -- GRANT ALL ON SCHEMA topology TO dird;
         -- GRANT ALL ON ALL FUNCTIONS IN SCHEMA topology TO dird;
         -- GRANT ALL ON ALL TABLES IN SCHEMA topology TO dird;
@@ -16,25 +22,17 @@ class Scripts:
 
         -- before running this script
 
-        SELECT topology.CreateTopology('ma_topo', 3857, 15);
+        SELECT topology.CreateTopology('{TOPO_SCHEMA}', {SRID}, {PREC});
         CREATE TABLE if not exists simple_locations_topology(id serial, area_id int);
-        SELECT topology.AddTopoGeometryColumn('ma_topo', 'public', 'simple_locations_topology', 'topo', 'POLYGON');
+        SELECT topology.AddTopoGeometryColumn('{TOPO_SCHEMA}', 'public', '{TOPOLOGY_TABLE}', '{TOPO_FIELD}', '{GEOM_TYPE}');
     """
 
-    insert_areas = """
-        -- This is fast
-        insert into simple_locations_topology(area_id, topo)
-            select id, topology.toTopoGeom(st_transform(geom, 3857), 'ma_topo', 1)
-            from simple_locations_area where kind_id = 4;
-
-    """
-
-    insert_areas_2 = """
+    insert_areas = f"""
         -- This took about 3 - 4 minutes
         -- Topology inserts of polygons are known to be very slow
         insert into simple_locations_topology(area_id, topo)
-            select id, topology.toTopoGeom(st_transform(geom, 3857), 'ma_topo', 1)
-            from simple_locations_area where kind_id != 4;
+            select id, topology.toTopoGeom(st_transform(geom, {SRID}), '{TOPO_SCHEMA}', 1)
+            from simple_locations_area;
     """
 
     populate_edge_table = """
@@ -140,12 +138,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         with connection.cursor() as c:
+
+            # self.stdout.write(self.style.SUCCESS(Scripts.remove_topology))
+            # c.execute(Scripts.remove_topology)
+
             self.stdout.write(self.style.SUCCESS(Scripts.init_topology))
             c.execute(Scripts.init_topology)
             self.stdout.write(self.style.SUCCESS(Scripts.insert_areas))
             c.execute(Scripts.insert_areas)
-            self.stdout.write(self.style.SUCCESS(Scripts.insert_areas_2))
-            c.execute(Scripts.insert_areas_2)
             self.stdout.write(self.style.SUCCESS(Scripts.populate_edge_table))
             c.execute(Scripts.populate_edge_table)
             self.stdout.write(self.style.SUCCESS(Scripts.populate_border_areas))
@@ -157,7 +157,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(Scripts.update_border_area_array))
             c.execute(Scripts.update_border_area_array)
 
-            self.stdout.write(self.style.SUCCESS(Scripts.remove_topology))
-            c.execute(Scripts.remove_topology)
+            # self.stdout.write(self.style.SUCCESS(Scripts.remove_topology))
+            # c.execute(Scripts.remove_topology)
 
         # raise NotImplementedError()

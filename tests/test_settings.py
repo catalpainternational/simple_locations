@@ -9,9 +9,15 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import importlib
+from importlib.util import find_spec
+from os import environ
 
 from pathlib import Path
 from typing import List
+
+if find_spec("dotenv"):
+    importlib.import_module("dotenv").load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -95,6 +101,14 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
+
+# The optional package `dj_database_url` allows specification of a
+# Django database using a string URL
+if find_spec("dj_database_url"):
+    if db_url := environ.get("DJ_DATABASE_URL"):
+        DATABASES["default"] = importlib.import_module("dj_database_url").parse(db_url)
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -159,5 +173,10 @@ LOGGING = {
             "propagate": True,
         },
         "osmflex": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+        "simple_locations": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
     },
 }
+
+if DEBUG and find_spec("django_extensions"):
+    # "pip install django-extensions"
+    INSTALLED_APPS.append("django_extensions")
