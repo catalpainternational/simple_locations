@@ -17,6 +17,10 @@ exclude = '''
 )/
 '''
 
+[tool.ruff]
+line-length = 119
+exclude = ['migrations']
+
 [tool.poetry]
 name = "simple-locations"
 version = "4.0.0"
@@ -36,9 +40,10 @@ homepage = "https://github.com/catalpainternational/simple_locations"
 [tool.poetry.dependencies]
 python = "^3.8"
 django-mptt = "^0.14.0"
-pydantic = "^1.10.6"
+pydantic = ">1.10.6,<2"
 django-ninja = "^0.21.0"
 django-geojson = "^4.0.0"
+geojson-pydantic = "^0.6.2"
 
 [tool.poetry.group.dev]
 optional = true

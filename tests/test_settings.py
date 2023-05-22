@@ -80,7 +80,7 @@ WSGI_APPLICATION = "simple_locations.wsgi.application"
 
 
 # Temporary:
-# docker run --rm -p 49155:5432 --name=djangostreetmap -e POSTGRES_PASSWORD=post1234 postgis/postgis:14-3.2 -c fsync=off -c shared_buffers=4096MB
+# docker run --rm -p 49156:5432 --name=dird -e POSTGRES_PASSWORD=dird -e POSTGRES_DB=dird_db -e POSTGRES_USER=dird postgis/postgis:14-3.2 -c fsync=off -c shared_buffers=4096MB
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",

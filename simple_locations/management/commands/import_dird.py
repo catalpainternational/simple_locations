@@ -235,7 +235,7 @@ class Command(BaseCommand):
         Wosera-Gawi District	Wosera Gawi District
         Yangoru-Saussia District	Yangoru Saussia District"""
 
-        renames = []  # type: List[RenameDistrict]
+        renames: List[RenameDistrict] = []
 
         for s in sources.split("\n"):
             n = s.split("\t")
