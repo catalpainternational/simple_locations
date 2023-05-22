@@ -105,7 +105,7 @@ class Scripts:
             (select areas.area_ids from areas
             where areas.border_id = b.id)
             where b.id in (select border_id from areas)
-    """
+    """  # noqa: E501
 
     update_border_type_array = """
 
