@@ -4,7 +4,7 @@ from mptt.admin import MPTTModelAdmin
 
 from simple_locations.models import Area, AreaIndicator, AreaType, Point
 
-area_admin_classes = [admin.OSMGeoAdmin, MPTTModelAdmin]
+area_admin_classes = [admin.GISModelAdmin, MPTTModelAdmin]
 
 # Translated models are "nice to have"
 try:
