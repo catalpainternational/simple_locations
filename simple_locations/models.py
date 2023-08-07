@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Iterable, List, Optional, Type
 
 from django.contrib.gis.db.models import (
@@ -5,7 +6,9 @@ from django.contrib.gis.db.models import (
     LineStringField,
     MultiPolygonField,
 )
-from django.contrib.postgres.fields import ArrayField
+
+from psycopg2.extras import DateRange
+from django.contrib.postgres.fields import ArrayField, DateRangeField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
@@ -108,6 +111,11 @@ class AreaType(models.Model):
         return _(self.name)
 
 
+def default_date_range():
+    # DateRange isn't serializable in a migration so we need an external function as default
+    return DateRange(date(1975, 9, 16), date(2999, 12, 31))
+
+
 class Area(MPTTModel):
     class Meta:
         unique_together = ("code", "kind")
@@ -122,6 +130,7 @@ class Area(MPTTModel):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=50, unique=True)  # was CodeField
     kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
+    validity_period = DateRangeField(default=default_date_range)
     location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
