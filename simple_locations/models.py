@@ -134,6 +134,7 @@ class Area(MPTTModel):
     location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
+    metadata = models.JSONField(null=True, blank=True, default=None)
 
     def delete(self):
         super(Area, self).delete()
