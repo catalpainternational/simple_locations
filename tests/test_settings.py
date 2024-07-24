@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 from typing import List
 
@@ -161,3 +162,4 @@ LOGGING = {
         "osmflex": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
     },
 }
+
