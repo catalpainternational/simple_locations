@@ -163,5 +163,3 @@ LOGGING = {
     },
 }
 
-if 'TEST_CONFIGURED_AREA_MODEL' in os.environ:
-    SIMPLE_LOCATIONS_AREA_MODEL = 'sl_tests.ConfiguredAreaModel'

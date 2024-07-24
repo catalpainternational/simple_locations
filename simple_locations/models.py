@@ -1,27 +1,13 @@
 from typing import Iterable, List, Optional, Type
 
-from django.apps import apps
-from django.conf import settings
 from django.contrib.gis.db.models import (
     GeometryField,
-    LineStringField,
-    MultiPolygonField,
 )
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
 
-from .base_area import AbstractBaseArea
-
-DEFUALT_AREA_MODEL_LABEL = 'simple_locations.Area'
-AREA_MODEL_LABEL = getattr(settings, 'SIMPLE_LOCATIONS_AREA_MODEL', DEFUALT_AREA_MODEL_LABEL)
-
-if AREA_MODEL_LABEL == DEFUALT_AREA_MODEL_LABEL:
-    Area = type('Area', (AbstractBaseArea,), dict(__module__=__name__))
-else:
-    Area = apps.get_model(AREA_MODEL_LABEL, require_ready=False)
-
+from . import base_models
 
 
 def get_geom_field(model) -> GeometryField:
@@ -91,62 +77,25 @@ class DateStampedModel(models.Model):
         abstract = True
 
 
-class Point(models.Model):
-    class Meta:
-        verbose_name = __("Point")
-        verbose_name_plural = __("Points")
+class Point(base_models.AbstractBasePoint):
+    class Meta(base_models.AbstractBasePoint.Meta):
         app_label = "simple_locations"
 
-    latitude = models.DecimalField(max_digits=13, decimal_places=10)
-    longitude = models.DecimalField(max_digits=13, decimal_places=10)
-
-    def __str__(self):
-        return _("%(lat)s, %(lon)s") % {"lat": self.latitude, "lon": self.longitude}
-
-
-class AreaType(models.Model):
-    class Meta:
-        verbose_name = __("Area Type")
-        verbose_name_plural = __("Area Types")
+class AreaType(base_models.AbstractBaseAreaType):
+    class Meta(base_models.AbstractBaseAreaType.Meta):
         app_label = "simple_locations"
 
-    name = models.CharField(max_length=100)
-    slug = models.CharField(max_length=30, unique=True)
+class Area(base_models.get_area_base(AreaType, Point)):
 
-    def __str__(self):
-        return _(self.name)
+    class Meta(base_models._AbstractBaseArea.Meta):
+        app_label = "simple_locations"
 
-
-
-class ProjectedArea(models.Model):
-    """
-    Projected "area" instances in the common web mercator (3857)
-    This allows for correctly indexed spatial queries against data which is
-    in that coordinates system when ingested.
-    Most commonly this would be OSM data
-    """
-
-    geom = MultiPolygonField(null=True, blank=True, srid=3857)
-    area = models.OneToOneField(Area, primary_key=True, on_delete=models.CASCADE)
+class ProjectedArea(base_models.get_projected_area_base(Area)):
+    pass
 
 
-class Border(models.Model):
-    """
-    Shared parts of border topologies are referenced
-    here in order to make a more efficient mapping layer.
-    When we do this we can greatly reduce the amount of data
-    sent to client (for PNG 'area' is 9.6M on-disk, 'lines' is 2.3M on-disk)
-    """
-
-    # srid could be 4326 or 3857. 3857 is easier for simplification
-    # because it's in meters; simplification in degrees is not fun.
-    geom = LineStringField(srid=3857)
-    area = models.ManyToManyField(Area)
-
-    # The following fields are denormalised in order to
-    # simplify generting and filtering vector data
-    area_ids = ArrayField(models.IntegerField(), default=list)
-    area_types = ArrayField(models.IntegerField(), default=list)
+class Border(base_models.get_border_base(Area)):
+    pass
 
 
 class AreaProfile(DateStampedModel):
