@@ -81,14 +81,16 @@ class Point(base_models.AbstractBasePoint):
     class Meta(base_models.AbstractBasePoint.Meta):
         app_label = "simple_locations"
 
+
 class AreaType(base_models.AbstractBaseAreaType):
     class Meta(base_models.AbstractBaseAreaType.Meta):
         app_label = "simple_locations"
 
-class Area(base_models.get_area_base(AreaType, Point)):
 
+class Area(base_models.get_area_base(AreaType, Point)):
     class Meta(base_models._AbstractBaseArea.Meta):
         app_label = "simple_locations"
+
 
 class ProjectedArea(base_models.get_projected_area_base(Area)):
     pass

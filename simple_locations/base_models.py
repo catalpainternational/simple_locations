@@ -35,20 +35,23 @@ class AbstractBasePoint(models.Model):
     def __str__(self):
         return _("%(lat)s, %(lon)s") % {"lat": self.latitude, "lon": self.longitude}
 
-Meta = type('Meta', (object,), {'abstract': True})
+
+Meta = type("Meta", (object,), {"abstract": True})
+
 
 def get_area_base(kind_model: AbstractBaseAreaType, point_model: AbstractBasePoint):
     """Return the AbstractBaseArea base class
-        kind_model: Concrete Model for Area Type
-        point_model: Concrete Model for Point
+    kind_model: Concrete Model for Area Type
+    point_model: Concrete Model for Point
     """
     attrs = {
-        'kind': models.ForeignKey(kind_model, blank=True, null=True, on_delete=models.CASCADE),
-        'location': models.ForeignKey(point_model, blank=True, null=True, on_delete=models.CASCADE),
-        '__module__': __name__,
-        'Meta': Meta(),
+        "kind": models.ForeignKey(kind_model, blank=True, null=True, on_delete=models.CASCADE),
+        "location": models.ForeignKey(point_model, blank=True, null=True, on_delete=models.CASCADE),
+        "__module__": __name__,
+        "Meta": Meta(),
     }
-    return type('AbstractBaseArea', (_AbstractBaseArea,), attrs)
+    return type("AbstractBaseArea", (_AbstractBaseArea,), attrs)
+
 
 class _AbstractBaseArea(MPTTModel):
     class Meta:
@@ -110,14 +113,15 @@ class _AbstractBaseArea(MPTTModel):
 
 def get_projected_area_base(area_model: _AbstractBaseArea):
     """Return the AbstractBaseProjectedArea base class
-        area_model: Concrete Model for Area
+    area_model: Concrete Model for Area
     """
     attrs = {
-        'area': models.OneToOneField(area_model, primary_key=True, on_delete=models.CASCADE),
-        '__module__': __name__,
-        'Meta': Meta(),
+        "area": models.OneToOneField(area_model, primary_key=True, on_delete=models.CASCADE),
+        "__module__": __name__,
+        "Meta": Meta(),
     }
-    return type('AbstractBaseProjectedArea', (_AbstractBaseProjectedArea,), attrs)
+    return type("AbstractBaseProjectedArea", (_AbstractBaseProjectedArea,), attrs)
+
 
 class _AbstractBaseProjectedArea(models.Model):
     """
@@ -132,16 +136,18 @@ class _AbstractBaseProjectedArea(models.Model):
 
     geom = MultiPolygonField(null=True, blank=True, srid=3857)
 
+
 def get_border_base(area_model: _AbstractBaseArea):
     """Return the AbstractBaseProjectedArea base class
-        area_model: Concrete Model for Area
+    area_model: Concrete Model for Area
     """
     attrs = {
-        'area': models.ManyToManyField(area_model),
-        '__module__': __name__,
-        'Meta': Meta(),
+        "area": models.ManyToManyField(area_model),
+        "__module__": __name__,
+        "Meta": Meta(),
     }
-    return type('AbstractBaseBorder', (_AbstractBaseBorder,), attrs)
+    return type("AbstractBaseBorder", (_AbstractBaseBorder,), attrs)
+
 
 class _AbstractBaseBorder(models.Model):
     """
