@@ -1,5 +1,7 @@
 from typing import Iterable, List, Optional, Type
 
+from django.apps import apps
+from django.conf import settings
 from django.contrib.gis.db.models import (
     GeometryField,
     LineStringField,
@@ -9,10 +11,17 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __
-from mptt.models import MPTTModel
 
-from simple_locations.feature_manager import FeatureQueryset
-from simple_locations.manager import AreaQueryset
+from .base_area import AbstractBaseArea
+
+DEFUALT_AREA_MODEL_LABEL = 'simple_locations.Area'
+AREA_MODEL_LABEL = getattr(settings, 'SIMPLE_LOCATIONS_AREA_MODEL', DEFUALT_AREA_MODEL_LABEL)
+
+if AREA_MODEL_LABEL == DEFUALT_AREA_MODEL_LABEL:
+    Area = type('Area', (AbstractBaseArea,), dict(__module__=__name__))
+else:
+    Area = apps.get_model(AREA_MODEL_LABEL, require_ready=False)
+
 
 
 def get_geom_field(model) -> GeometryField:
@@ -108,61 +117,6 @@ class AreaType(models.Model):
         return _(self.name)
 
 
-class Area(MPTTModel):
-    class Meta:
-        unique_together = ("code", "kind")
-        verbose_name = __("Area")
-        verbose_name_plural = __("Areas")
-        app_label = "simple_locations"
-
-    class MPTTMeta:
-        parent_attr = "parent"
-        order_insertion_by = ["name"]
-
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=50, unique=True)  # was CodeField
-    kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
-    location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
-    geom = MultiPolygonField(srid=4326, blank=True, null=True)
-    parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
-
-    def delete(self):
-        super(Area, self).delete()
-
-    def get_ancestor_at_level(self, level=2) -> "Area":
-        """Get the area ancestor at a given level
-
-        Will travel the tree until it reaches the level or return self if already under that level"""
-        if self.get_level() <= level:
-            return self
-        return self.get_ancestors()[level]
-
-    def display_name_and_type(self) -> str:
-        """Area name and type
-
-        Example District of Bamako"""
-        return f"{self.kind.name} of {self.name}"
-
-    def display_with_parent(self) -> str:
-        """Print Area name and kind and parent name and kind
-
-        Example: Aldeia of Baha-Neo in Suco of Lia Ruca"""
-        if not self.parent:
-            return self.display_name_and_type()
-        elif self.kind.name == "District":
-            return self.display_name_and_type()
-        else:
-            return "%(this)s in %(parent)s" % {
-                "this": self.display_name_and_type(),
-                "parent": self.parent.display_name_and_type(),
-            }
-
-    def __str__(self) -> str:
-        return self.name
-
-    geofunctions = AreaQueryset.as_manager()
-    features = FeatureQueryset.as_manager()
-
 
 class ProjectedArea(models.Model):
     """
@@ -173,7 +127,7 @@ class ProjectedArea(models.Model):
     """
 
     geom = MultiPolygonField(null=True, blank=True, srid=3857)
-    area = models.OneToOneField("Area", primary_key=True, on_delete=models.CASCADE)
+    area = models.OneToOneField(Area, primary_key=True, on_delete=models.CASCADE)
 
 
 class Border(models.Model):
@@ -187,7 +141,7 @@ class Border(models.Model):
     # srid could be 4326 or 3857. 3857 is easier for simplification
     # because it's in meters; simplification in degrees is not fun.
     geom = LineStringField(srid=3857)
-    area = models.ManyToManyField("Area")
+    area = models.ManyToManyField(Area)
 
     # The following fields are denormalised in order to
     # simplify generting and filtering vector data
@@ -196,7 +150,7 @@ class Border(models.Model):
 
 
 class AreaProfile(DateStampedModel):
-    area = models.OneToOneField("Area", on_delete=models.CASCADE, primary_key=True)
+    area = models.OneToOneField(Area, on_delete=models.CASCADE, primary_key=True)
     description = models.TextField()
 
 
@@ -228,7 +182,7 @@ class AreaIndicator(DateStampedModel):
         ORDINAL = "O", _("Ordinal")
         QUALITATIVE = "Q", _("Qualitative")
 
-    area = models.ForeignKey("Area", on_delete=models.CASCADE)
+    area = models.ForeignKey(Area, on_delete=models.CASCADE)
     name = models.TextField()
 
     measure = models.CharField(
