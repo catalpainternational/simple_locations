@@ -31,7 +31,7 @@ class FeatureQueryset(models.QuerySet):
         >>> # A FeatureCollection:
         >>> FeatureCollection.parse_obj(queryset.aggregate(features = JSONBAgg(JsonFeature())))
         """
-        return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
+        return FeatureCollection.model_construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
     def annotate_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
         """
