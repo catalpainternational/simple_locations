@@ -4,12 +4,12 @@ from simple_locations.models import Area, AreaType
 
 
 class AreaModelSchema(ModelSchema):
-    class Config:
+    class Meta:
         model = Area
-        model_fields = ["name", "id", "kind", "parent"]
+        fields = ["name", "id", "kind", "parent"]
 
 
 class AreaTypeModelSchema(ModelSchema):
-    class Config:
+    class Meta:
         model = AreaType
-        model_fields = ["id", "name", "slug"]
+        fields = ["id", "name", "slug"]

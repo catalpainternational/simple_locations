@@ -35,21 +35,21 @@ homepage = "https://github.com/catalpainternational/simple_locations"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-django-mptt = "^0.14.0"
-pydantic = "^1.10.6"
-django-ninja = "^0.21.0"
-django-geojson = "^4.0.0"
+django-mptt = "^0.16.0"
+pydantic = ">=1.10, <3"
+django-ninja = ">=0.21, <2"
+django-geojson = "^4.1.0"
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = {extras = ["jupyter"], version = "^23.1.0"}
+black = { extras = ["jupyter"], version = "^23.1.0" }
 flake8 = "*"
 isort = "*"
 pre-commit = "*"
 mypy = "*"
-django-stubs = {extras = ["compatible-mypy"], version = "^1.16.0"}
+django-stubs = { extras = ["compatible-mypy"], version = "^1.16.0" }
 psycopg2-binary = "*"
 pytest-django = "*"
 pytest-cov = "*"
