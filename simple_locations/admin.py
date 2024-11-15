@@ -24,8 +24,6 @@ try:
 except ImportError:
     pass
 
-print(area_admin_classes)
-
 
 class PointAdmin(admin.ModelAdmin):
     list_display = ("id", "latitude", "longitude")
