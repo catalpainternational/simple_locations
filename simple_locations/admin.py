@@ -16,14 +16,6 @@ except ImportError:
     TranslationAdmin = admin.ModelAdmin
     pass
 
-# Optionally support Django Guardian per-object permissions in Area
-try:
-    from guardian.admin import GuardedModelAdminMixin
-
-    area_admin_classes.insert(0, GuardedModelAdminMixin)
-except ImportError:
-    pass
-
 
 class PointAdmin(admin.ModelAdmin):
     list_display = ("id", "latitude", "longitude")
