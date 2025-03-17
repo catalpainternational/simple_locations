@@ -30,8 +30,8 @@ class FeatureQueryset(models.QuerySet):
         >>> [Feature.parse_obj(i) for i in Area.geofunctions.filter(kind__name='district').to_features(simplify=1e-3, quantize=5).values_list('feature', flat=True)]
         >>> # A FeatureCollection:
         >>> FeatureCollection.parse_obj(queryset.aggregate(features = JSONBAgg(JsonFeature())))
-        """  # noqa: E501
-        return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
+        """
+        return FeatureCollection.model_construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
     def annotate_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):
         """
