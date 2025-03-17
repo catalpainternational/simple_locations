@@ -1,9 +1,9 @@
 from typing import Generator, Union
 
 from django.db import models
+from geojson_pydantic import FeatureCollection, Feature
 
 from simple_locations.gis_functions import JsonFeature
-from simple_locations.schemas import Feature, FeatureCollection
 
 
 class FeatureQueryset(models.QuerySet):
@@ -30,7 +30,7 @@ class FeatureQueryset(models.QuerySet):
         >>> [Feature.parse_obj(i) for i in Area.geofunctions.filter(kind__name='district').to_features(simplify=1e-3, quantize=5).values_list('feature', flat=True)]
         >>> # A FeatureCollection:
         >>> FeatureCollection.parse_obj(queryset.aggregate(features = JSONBAgg(JsonFeature())))
-        """
+        """  # noqa: E501
         return FeatureCollection.construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 
     def annotate_features(self, simplify: Union[float, None] = None, quantize: Union[int, None] = None):

@@ -2,7 +2,9 @@ from typing import Generator, List, Tuple
 
 from ninja import Router
 
-from simple_locations import model_schemas, models, schemas
+from geojson_pydantic import FeatureCollection, Feature
+
+from simple_locations import model_schemas, models
 
 router = Router(tags=["SimpleLocations"])
 
@@ -25,17 +27,17 @@ def area_type_list(request):
     return models.AreaType.objects.all()
 
 
-@router.get("/area/by-id/{area_id}.geojson", response=schemas.Feature)
+@router.get("/area/by-id/{area_id}.geojson", response=Feature)
 def area_id(request, area_id: int):
     """
     Returns the geometry of a single Area
     as a single GeoJSON Feature
     """
-    features: Generator[schemas.Feature, None, None] = models.Area.features.filter(pk=area_id).to_features()
-    return schemas.Feature.parse_obj(next(features))
+    features: Generator[Feature, None, None] = models.Area.features.filter(pk=area_id).to_features()
+    return Feature.parse_obj(next(features))
 
 
-@router.get("/area/by-parent/{area_id}-s{simplify}-q{quantize}.geojson", response=schemas.FeatureCollection)
+@router.get("/area/by-parent/{area_id}-s{simplify}-q{quantize}.geojson", response=FeatureCollection)
 def area_children_compressed(request, area_id: int, simplify: int, quantize: int):
     """
     Returns the direct descendants of a given Area as a FeatureCollection
@@ -46,7 +48,7 @@ def area_children_compressed(request, area_id: int, simplify: int, quantize: int
     )
 
 
-@router.get("/area/by-parent/{area_id}.geojson", response=schemas.FeatureCollection)
+@router.get("/area/by-parent/{area_id}.geojson", response=FeatureCollection)
 def area_children(request, area_id: int):
     """
     Returns the direct descendants of a given Area as a FeatureCollection
@@ -55,7 +57,7 @@ def area_children(request, area_id: int):
     return models.Area.features.filter(parent=area_id).to_featurecollection()
 
 
-@router.get("/area/by-type/{area_type}-s{simplify}-q{quantize}.geojson", response=schemas.FeatureCollection)
+@router.get("/area/by-type/{area_type}-s{simplify}-q{quantize}.geojson", response=FeatureCollection)
 def area_type_compressed(request, area_type: str, simplify: int, quantize: int):
     """
     Returns all areas of a given type
@@ -66,7 +68,7 @@ def area_type_compressed(request, area_type: str, simplify: int, quantize: int):
     )
 
 
-@router.get("/area/by-type/{area_type}.geojson", response=schemas.FeatureCollection)
+@router.get("/area/by-type/{area_type}.geojson", response=FeatureCollection)
 def area_type(request, area_type: str):
     """
     Returns all areas of a given type

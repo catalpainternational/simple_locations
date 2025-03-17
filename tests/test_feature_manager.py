@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from simple_locations.gis_functions import AsGeoJson, JsonFeature
 from simple_locations.models import Area
-from simple_locations.schemas import Feature, FeatureCollection
+from geojson_pydantic import FeatureCollection, Feature
 from tests.factories import AreaFactory  # type: ignore
 
 

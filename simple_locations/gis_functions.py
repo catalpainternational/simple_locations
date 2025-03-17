@@ -103,6 +103,7 @@ class JsonFeature(models.Func):
             g = Quantize(g, quantize=quantize)
         if multi:
             g = Multi(g)
+        expressions.extend((Value("type"), Value("Feature")))
         expressions.extend((Value("geometry"), AsGeoJson(g, bbox=bbox_, crs=crs_, precision=precision_)))
         expressions.extend((Value("properties"), JSONObject(**fields)))
         super().__init__(*expressions)

@@ -33,7 +33,7 @@ class AreaQueryset(models.QuerySet):
         """
 
         output = io.StringIO()  # Avoids a round-trip deserializer by using a raw StringIO
-        prefix = """{"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "features": ["""
+        prefix = """{"type": "FeatureCollection", "crs": {"type": "name", "properties": {"name": "EPSG:4326"}}, "features": ["""  # noqa: E501
         pattern = '{"type": "Feature", "geometry": %s, "properties": {"id": %s } }'
         suffix = "]}"
 
