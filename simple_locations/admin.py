@@ -21,7 +21,7 @@ try:
     from guardian.admin import GuardedModelAdminMixin
 
     area_admin_classes.insert(0, GuardedModelAdminMixin)
-except ImportError:
+except (ImportError, RuntimeError):
     pass
 
 
