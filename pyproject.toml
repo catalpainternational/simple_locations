@@ -17,6 +17,20 @@ exclude = '''
 )/
 '''
 
+[project]
+name = "simple-locations"
+version = "4.0.0a0"
+description = "The common location package for Catalpa's projects"
+authors = [
+  { name = "Joshua Brooks", email = "josh@catalpa.io" },
+  { name = "Anders Hofstee", email = "anders@catalpa.io" },
+  { name = "Nicoas Hoibian", email = "admin@catalpa.io" },
+]
+license = { text = "BSD" }
+readme = "README.md"
+requires-python = ">=3.8"
+urls = { "Repository" = "https://github.com/catalpainternational/simple_locations", "Homepage" = "https://github.com/catalpainternational/simple_locations" }
+
 [tool.poetry]
 name = "simple-locations"
 version = "4.0.0a0"
