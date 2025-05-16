@@ -53,7 +53,7 @@
                 <td>{{form.kind}}</td>
                 <td class="errors">{{form.kind.errors}}</td>
             </tr>
-            {% if not nodes|length_is:"0" %}
+            {% if nodes|length > 0 %}
             <tr>
                 <td>{{ form.move_choice }}Move:
                 <td>{{ form.position }} &nbsp;&nbsp;&nbsp;Of:{{ form.target }}</td>
