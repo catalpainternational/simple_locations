@@ -24,6 +24,14 @@ try:
 except (ImportError, RuntimeError):
     pass
 
+# Optionally support locally served OpenLayer JS in OSMWidget to avoid CSP problems
+try:
+    from dird_templates.utils import CSPMixinForGeoWidget
+
+    area_admin_classes.insert(0, CSPMixinForGeoWidget)
+except (ImportError, RuntimeError):
+    pass
+
 
 class PointAdmin(admin.ModelAdmin):
     list_display = ("id", "latitude", "longitude")
