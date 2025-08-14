@@ -5,6 +5,7 @@ from django.contrib.gis.db.models import (
     GeometryField,
     LineStringField,
     MultiPolygonField,
+    PointField,
 )
 
 from psycopg2.extras import DateRange
@@ -86,6 +87,7 @@ class DateStampedModel(models.Model):
 
 
 class Point(models.Model):
+    # DEPRECATED: use PointField instead
     class Meta:
         verbose_name = __("Point")
         verbose_name_plural = __("Points")
@@ -131,7 +133,7 @@ class Area(MPTTModel):
     code = models.CharField(max_length=50, unique=True)  # was CodeField
     kind = models.ForeignKey("AreaType", blank=True, null=True, on_delete=models.CASCADE)
     validity_period = DateRangeField(default=default_date_range)
-    location = models.ForeignKey(Point, blank=True, null=True, on_delete=models.CASCADE)
+    location = PointField(srid=4326, blank=True, null=True)
     geom = MultiPolygonField(srid=4326, blank=True, null=True)
     parent = models.ForeignKey("self", blank=True, null=True, related_name="children", on_delete=models.CASCADE)
     metadata = models.JSONField(null=True, blank=True, default=None)
