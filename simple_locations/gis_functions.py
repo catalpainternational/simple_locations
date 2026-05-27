@@ -5,6 +5,7 @@ from django.contrib.gis.db.models.functions import AsGeoJSON as AsGeoJson_
 from django.db import models
 from django.db.models import F, Func, Value
 from django.db.models.fields.json import JSONField
+
 try:
     from django.db.models.functions.json import JSONObject
 except ImportError:
@@ -64,7 +65,7 @@ class AsGeoJson(AsGeoJson_):
     """
 
     ...
-    template = f"{AsGeoJson_.template}::json"
+    template = f"{AsGeoJson_.template}" "::json"
     # output_field = models.JSONField()
 
 

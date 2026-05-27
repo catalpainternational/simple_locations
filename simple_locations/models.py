@@ -62,7 +62,7 @@ def intersects_areas(area_ids: Iterable[int], model: models.Model, geom_field: O
     geom_field_name: str = geom_field_instance.db_column or geom_field_instance.attname
 
     area_query_values = ",".join(map(str, area_ids))
-    area_clause = f"""ANY ('{{{area_query_values}}}'::int[])"""
+    area_clause = f"""ANY ('{{{area_query_values}}}'""" + "::int[])"
 
     area_model = _area_model(geom_field_instance.srid)
     area_table_name = area_model._meta.db_table
