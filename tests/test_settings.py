@@ -18,10 +18,41 @@ from typing import List
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# GeoDjango loads native libs from settings (not os.environ). Forward shell exports from ~/.zshenv.
-if gdal_path := os.environ.get("GDAL_LIBRARY_PATH"):
+
+def _library_path_from_ldconfig(soname: str) -> str | None:
+    import subprocess
+
+    try:
+        proc = subprocess.run(
+            ["ldconfig", "-p"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    needle = f" {soname} "
+    for line in proc.stdout.splitlines():
+        if needle in line and " => " in line:
+            return line.split("=>", 1)[1].strip().split()[0]
+    return None
+
+
+def _native_library_path(env_var: str, find_names: tuple[str, ...], ldconfig_name: str) -> str | None:
+    if path := os.environ.get(env_var):
+        return path
+    from ctypes.util import find_library
+
+    for name in find_names:
+        if path := find_library(name):
+            return _library_path_from_ldconfig(path) or path
+    return _library_path_from_ldconfig(ldconfig_name)
+
+
+# GeoDjango reads GDAL/GEOS paths from settings (not os.environ).
+if gdal_path := _native_library_path("GDAL_LIBRARY_PATH", ("gdal", "GDAL"), "libgdal.so"):
     GDAL_LIBRARY_PATH = gdal_path
-if geos_path := os.environ.get("GEOS_LIBRARY_PATH"):
+if geos_path := _native_library_path("GEOS_LIBRARY_PATH", ("geos_c", "GEOS"), "libgeos_c.so"):
     GEOS_LIBRARY_PATH = geos_path
 
 

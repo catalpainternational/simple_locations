@@ -25,19 +25,22 @@ jobs:
         cache: "poetry"
     - run: poetry install --with dev --no-root
 
+    - name: Install OS level dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binutils libproj-dev gdal-bin libgdal-dev libgeos-dev
+
     - name: Lint with flake8
       if: always()
       run: |
-        poetry run flake8 .
-
-    - name: Install OS level dependencies
-      run: |
-          sudo apt-get update
-          sudo apt-get install binutils libproj-dev gdal-bin
+        poetry run flake8 simple_locations tests sl_tests
 
     - name: Test with pytest
       if: always()
-      run: poetry run pytest
+      run: |
+        export GDAL_LIBRARY_PATH="$(ldconfig -p | grep -m1 'libgdal.so ' | awk '{print $NF}')"
+        export GEOS_LIBRARY_PATH="$(ldconfig -p | grep -m1 'libgeos_c.so ' | awk '{print $NF}')"
+        poetry run pytest
 
     - name: Test mypy
       if: always()
