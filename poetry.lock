@@ -333,24 +333,24 @@ tests = ["coverage[toml]", "mock-django"]
 
 [[package]]
 name = "django-ninja"
-version = "1.2.1"
+version = "1.6.2"
 description = "Django Ninja - Fast Django REST framework"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "django_ninja-1.2.1-py3-none-any.whl", hash = "sha256:acb7a0005e84acdb0ae96066c42c7f304f988a078d370e5952382b928bb28a08"},
-    {file = "django_ninja-1.2.1.tar.gz", hash = "sha256:667ff27304039d4692421709ae532fd62b16a4d34a969ef850d5cd22cb46090a"},
+    {file = "django_ninja-1.6.2-py3-none-any.whl", hash = "sha256:20095f5900bada22ea00cf1a58af50bdb285b2354c61a9d9b47d0dc89ac462d6"},
+    {file = "django_ninja-1.6.2.tar.gz", hash = "sha256:d56ae5aa4791068ef4ac9a66cfdf2fc11f507413ded35abb79c51d0d52ad6412"},
 ]
 
 [package.dependencies]
-Django = ">=3.1"
+Django = ">=3.1,<6.1"
 pydantic = ">=2.0,<3.0.0"
 
 [package.extras]
 dev = ["pre-commit"]
 doc = ["markdown-include", "mkdocs", "mkdocs-material", "mkdocstrings"]
-test = ["django-stubs", "mypy (==1.7.1)", "psycopg2-binary", "pytest", "pytest-asyncio", "pytest-cov", "pytest-django", "ruff (==0.4.2)"]
+test = ["django-stubs", "mypy (==1.7.1)", "psycopg2-binary", "pytest", "pytest-asyncio", "pytest-cov", "pytest-django", "ruff (==0.5.7)"]
 
 [[package]]
 name = "django-stubs"
@@ -1550,4 +1550,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "271d409980ca2d4f5ea30f5185927ba516f799938aa65406f83c5485cd6db279"
+content-hash = "93afa364996f3ab14b52bb99b3a1184b550ac12a54b58b5bfbdafdd997f4e20a"

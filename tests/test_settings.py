@@ -88,7 +88,7 @@ WSGI_APPLICATION = "simple_locations.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-# PostGIS integration tests (`pytest -m postgis`).
+# Tests use PostGIS via pytest-django (see test_settings DATABASES).
 # Defaults suit Postgres.app: OS user, no password, port 5432. pytest-django creates and
 # drops `simple_locations_test` when the role can CREATE DATABASE.
 # Override with POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT.

@@ -41,7 +41,7 @@ homepage = "https://github.com/catalpainternational/simple_locations"
 python = "^3.10"
 django-mptt = "^0.16.0"
 pydantic = ">=1.10, <3"
-django-ninja = ">=0.21, <2"
+django-ninja = ">=1.6,<2"
 django-geojson = "^4.2.0"
 geojson-pydantic = "^1.1"
 

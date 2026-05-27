@@ -27,29 +27,22 @@ pre-commit install
 
 ### Tests
 
-Install dev dependencies with Poetry, then:
+Install dev dependencies with Poetry, then run all tests (PostGIS + GDAL/GEOS required; see `tests/test_settings.py`):
 
 ```sh
-# Default: unit/smoke tests only (no PostGIS required; GDAL/GEOS dylibs still required)
 poetry run pytest
-
-# Integration tests (PostGIS; see test_settings.py)
-poetry run pytest -m postgis
-
-# Everything
-poetry run pytest -m ""
 ```
 
-**Postgres.app (macOS):** with PostGIS enabled, `poetry run pytest -m postgis` uses your OS user on `localhost:5432` (no password). pytest-django creates and destroys a `simple_locations_test` database if your role has `CREATEDB`.
+**Postgres.app (macOS):** with PostGIS enabled, tests use your OS user on `localhost:5432` (no password). pytest-django creates and destroys a `simple_locations_test` database if your role has `CREATEDB`.
 
 **Docker PostGIS** (official image defaults):
 
 ```sh
 docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgis/postgis:16-3.4
-POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=postgres poetry run pytest -m postgis
+POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=postgres poetry run pytest
 ```
 
-Override connection with `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST`, or `POSTGRES_PORT`. Use `pytest -m postgis --reuse-db` to keep the test database between runs.
+Override connection with `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST`, or `POSTGRES_PORT`. Use `pytest --reuse-db` to keep the test database between runs.
 
 On macOS, set `GDAL_LIBRARY_PATH` and `GEOS_LIBRARY_PATH` in the shell (forwarded in `tests/test_settings.py`).
 

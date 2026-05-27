@@ -34,7 +34,7 @@ def area_id(request, area_id: int):
     as a single GeoJSON Feature
     """
     features: Generator[Feature, None, None] = models.Area.features.filter(pk=area_id).to_features()
-    return Feature.parse_obj(next(features))
+    return Feature.model_validate(next(features))
 
 
 @router.get("/area/by-parent/{area_id}-s{simplify}-q{quantize}.geojson", response=FeatureCollection)

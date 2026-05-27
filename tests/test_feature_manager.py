@@ -9,7 +9,7 @@ from simple_locations.models import Area
 from geojson_pydantic import FeatureCollection, Feature
 from tests.factories import AreaFactory  # type: ignore
 
-pytestmark = [pytest.mark.postgis, pytest.mark.django_db]
+pytestmark = pytest.mark.django_db
 
 
 class FeatureManagerTests(TestCase):
@@ -39,7 +39,7 @@ class FeatureManagerTests(TestCase):
         self.assertIsInstance(feature, dict)
 
         # Convert to a Pydantic 'feature' instance
-        feature: Feature = Feature.parse_obj(feature)
+        feature: Feature = Feature.model_validate(feature)
         self.assertEqual(feature.type, "Feature")
         self.assertEqual(feature.geometry.type, "MultiPolygon")
 
@@ -49,7 +49,7 @@ class FeatureManagerTests(TestCase):
         the Manager instance on Area
         """
         for feature in Area.features.to_features():
-            self.assertIsInstance(Feature.parse_obj(feature), Feature)
+            self.assertIsInstance(Feature.model_validate(feature), Feature)
 
     def test_collection_from_manager(self):
         """

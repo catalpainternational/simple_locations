@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from tests.factories import AreaFactory
 
-pytestmark = [pytest.mark.postgis, pytest.mark.django_db]
+pytestmark = pytest.mark.django_db
 
 
 class SimpleLocationsAPITests(TestCase):

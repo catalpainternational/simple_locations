@@ -35,13 +35,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install binutils libproj-dev gdal-bin
 
-    - name: Test with pytest (no PostGIS)
+    - name: Test with pytest
       if: always()
-      run: poetry run pytest -m "not postgis"
-
-    - name: Test with pytest (PostGIS)
-      if: always()
-      run: poetry run pytest -m postgis
+      run: poetry run pytest
 
     - name: Test mypy
       if: always()
