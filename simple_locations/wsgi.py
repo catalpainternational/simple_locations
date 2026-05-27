@@ -1,5 +1,5 @@
 """
-WSGI config for openly_dird project.
+WSGI config for simple_locations.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

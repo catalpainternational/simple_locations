@@ -10,11 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import getpass
+import os
 from pathlib import Path
 from typing import List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# GeoDjango loads native libs from settings (not os.environ). Forward shell exports from ~/.zshenv.
+if gdal_path := os.environ.get("GDAL_LIBRARY_PATH"):
+    GDAL_LIBRARY_PATH = gdal_path
+if geos_path := os.environ.get("GEOS_LIBRARY_PATH"):
+    GEOS_LIBRARY_PATH = geos_path
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "django.contrib.gis",
     "mptt",
     "simple_locations",
@@ -79,16 +88,21 @@ WSGI_APPLICATION = "simple_locations.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-# Temporary:
-# docker run --rm -p 49156:5432 --name=dird -e POSTGRES_PASSWORD=dird -e POSTGRES_DB=dird_db -e POSTGRES_USER=dird postgis/postgis:14-3.2 -c fsync=off -c shared_buffers=4096MB
+# PostGIS integration tests (`pytest -m postgis`).
+# Defaults suit Postgres.app: OS user, no password, port 5432. pytest-django creates and
+# drops `simple_locations_test` when the role can CREATE DATABASE.
+# Override with POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT.
+_postgres_user = os.environ.get("POSTGRES_USER", getpass.getuser())
+_postgres_db = os.environ.get("POSTGRES_DB", _postgres_user)
+
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "USER": "dird",
-        "PASSWORD": "dird",
-        "HOST": "localhost",
-        "PORT": "49156",
-        "NAME": "dird_db",
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "USER": _postgres_user,
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
+        "NAME": _postgres_db,
         "TEST": {"NAME": "simple_locations_test"},
     }
 }

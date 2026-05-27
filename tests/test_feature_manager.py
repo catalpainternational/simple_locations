@@ -1,5 +1,6 @@
 import itertools
 
+import pytest
 from django.db.models import QuerySet
 from django.test import TestCase
 
@@ -7,6 +8,8 @@ from simple_locations.gis_functions import AsGeoJson, JsonFeature
 from simple_locations.models import Area
 from geojson_pydantic import FeatureCollection, Feature
 from tests.factories import AreaFactory  # type: ignore
+
+pytestmark = [pytest.mark.postgis, pytest.mark.django_db]
 
 
 class FeatureManagerTests(TestCase):

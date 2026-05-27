@@ -12,8 +12,8 @@ For modeltranslations, please remember to run `sync_translation_fields` in order
 
 This is intended to be compatible with:
 
-- Django 3.1, 3.2, 4.0
-- Python 3.7, 3.8, 3.9
+- Django 5.2 LTS (dev/tests); library code targets Django 3.2+
+- Python 3.10+ (3.12 recommended for local dev/tests)
 
 ```sh
 gh repo clone catalpainternational/simple_locations
@@ -24,6 +24,34 @@ pip install pip-tools
 pip-sync requirements.txt dev.txt
 pre-commit install
 ```
+
+### Tests
+
+Install dev dependencies with Poetry, then:
+
+```sh
+# Default: unit/smoke tests only (no PostGIS required; GDAL/GEOS dylibs still required)
+poetry run pytest
+
+# Integration tests (PostGIS; see test_settings.py)
+poetry run pytest -m postgis
+
+# Everything
+poetry run pytest -m ""
+```
+
+**Postgres.app (macOS):** with PostGIS enabled, `poetry run pytest -m postgis` uses your OS user on `localhost:5432` (no password). pytest-django creates and destroys a `simple_locations_test` database if your role has `CREATEDB`.
+
+**Docker PostGIS** (official image defaults):
+
+```sh
+docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgis/postgis:16-3.4
+POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres POSTGRES_DB=postgres poetry run pytest -m postgis
+```
+
+Override connection with `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_HOST`, or `POSTGRES_PORT`. Use `pytest -m postgis --reuse-db` to keep the test database between runs.
+
+On macOS, set `GDAL_LIBRARY_PATH` and `GEOS_LIBRARY_PATH` in the shell (forwarded in `tests/test_settings.py`).
 
 ### Pre Commit
 
@@ -52,7 +80,7 @@ See `build.yaml` for details on release tagging
   - Added `intersects_area` function
 
 - Version 3.1.2
-  - Uses psycopg2-binary for development environment
+  - Development tests use psycopg3 (`psycopg[binary]`); runtime code uses Django's `DateRange` (no psycopg2 import)
 
 - Version 3.1.1
   - Added "border" fields

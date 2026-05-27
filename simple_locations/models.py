@@ -7,8 +7,8 @@ from django.contrib.gis.db.models import (
     MultiPolygonField,
 )
 
-from psycopg2.extras import DateRange
 from django.contrib.postgres.fields import ArrayField, DateRangeField
+from django.contrib.postgres.fields.ranges import DateRange
 from django.db import models
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_lazy as __

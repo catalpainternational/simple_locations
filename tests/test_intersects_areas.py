@@ -1,9 +1,12 @@
+import pytest
 from django.contrib.gis.geos import Point
 from django.test import TestCase
 
 from simple_locations.models import Area, intersects_areas  # type: ignore
 from sl_tests.models import WgsPoint
 from tests.factories import AreaFactory, WgsPointFactory  # type: ignore
+
+pytestmark = [pytest.mark.postgis, pytest.mark.django_db]
 
 
 class IntersectsAreaTestCase(TestCase):
