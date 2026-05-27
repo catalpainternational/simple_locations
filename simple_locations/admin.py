@@ -18,7 +18,7 @@ except ImportError:
 
 # Optionally support Django Guardian per-object permissions in Area
 try:
-    from guardian.admin import GuardedModelAdminMixin
+    from guardian.admin import GuardedModelAdminMixin  # type: ignore[import-not-found]
 
     area_admin_classes.insert(0, GuardedModelAdminMixin)
 except ImportError:

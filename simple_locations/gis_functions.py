@@ -9,10 +9,7 @@ from django.db.models.fields.json import JSONField
 try:
     from django.db.models.functions.json import JSONObject
 except ImportError:
-    try:
-        from django.db.models.functions.comparison import JSONObject
-    except ImportError:
-        from django.db.models import JSONObject  # type: ignore[attr-defined]
+    from django.db.models import JSONObject  # type: ignore[attr-defined,no-redef]
 
 
 class Quantize(models.Func):

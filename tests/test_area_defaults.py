@@ -1,6 +1,6 @@
 from datetime import date
 
-from django.contrib.postgres.fields.ranges import DateRange
+from django.contrib.postgres.fields.ranges import DateRange  # type: ignore[attr-defined]
 
 
 def test_default_date_range_returns_django_date_range():

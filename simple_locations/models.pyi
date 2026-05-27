@@ -7,6 +7,8 @@ from mptt.models import MPTTModel
 
 from simple_locations.feature_manager import FeatureQueryset
 
+def default_date_range() -> Any: ...
+
 class DateStampedModel(models.Model):
     date_created: date
     date_modified: date
@@ -23,6 +25,8 @@ class Point(models.Model):
     longitude: Decimal
 
 class AreaType(models.Model):
+    objects: models.Manager["AreaType"]
+
     class Meta:
         verbose_name: str
         verbose_name_plural: str
@@ -64,11 +68,11 @@ class IndicatorMeasureSchema(models.Model):
 
 class AreaIndicator(DateStampedModel):
     class IndicatorMeasureChoice(models.TextChoices):
-        UNIT: Any
-        PERCENTAGE: Any
-        NOMINAL: Any
-        ORDINAL: Any
-        QUALITATIVE: Any
+        UNIT = "U", "Units"
+        PERCENTAGE = "P", "Percentages"
+        NOMINAL = "N", "Nominal"
+        ORDINAL = "O", "Ordinal"
+        QUALITATIVE = "Q", "Qualitative"
     area: Any
     name: Any
     measure: Any

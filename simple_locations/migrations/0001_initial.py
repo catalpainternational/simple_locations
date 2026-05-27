@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from typing import List, Tuple
 
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-    ]  # type: List[Tuple[str, str]]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
