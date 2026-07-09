@@ -1,9 +1,12 @@
 import json
 
+import pytest
 from django.test import TestCase
 
 from simple_locations.models import Area
 from tests.factories import AreaFactory  # type: ignore
+
+pytestmark = pytest.mark.django_db
 
 
 class GeoJsonTestCase(TestCase):

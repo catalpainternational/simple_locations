@@ -25,11 +25,11 @@ class FeatureQueryset(models.QuerySet):
         Pydantic integration
         ====================
         >>> from simple_locations.schemas import Feature
-        >>> Feature.parse_obj(Area.geofunctions.all().annotate(JsonFeature()).first().feature)
+        >>> Feature.model_validate(Area.geofunctions.all().annotate(JsonFeature()).first().feature)
         >>> # A list of features:
-        >>> [Feature.parse_obj(i) for i in Area.geofunctions.filter(kind__name='district').to_features(simplify=1e-3, quantize=5).values_list('feature', flat=True)]
+        >>> [Feature.model_validate(i) for i in Area.geofunctions.filter(kind__name='district').to_features(simplify=1e-3, quantize=5).values_list('feature', flat=True)]
         >>> # A FeatureCollection:
-        >>> FeatureCollection.parse_obj(queryset.aggregate(features = JSONBAgg(JsonFeature())))
+        >>> FeatureCollection.model_validate(queryset.aggregate(features = JSONBAgg(JsonFeature())))
         """
         return FeatureCollection.model_construct(features=[*self.to_features(simplify=simplify, quantize=quantize)])
 

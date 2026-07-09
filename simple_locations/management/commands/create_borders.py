@@ -9,10 +9,10 @@ class Scripts:
         -- You may need to run the following SQL:
 
         -- CREATE EXTENSION postgis_topology;
-        -- GRANT ALL ON SCHEMA topology TO dird;
-        -- GRANT ALL ON ALL FUNCTIONS IN SCHEMA topology TO dird;
-        -- GRANT ALL ON ALL TABLES IN SCHEMA topology TO dird;
-        -- GRANT ALL ON ALL SEQUENCES IN SCHEMA topology TO dird;
+        -- GRANT ALL ON SCHEMA topology TO <db_user>;
+        -- GRANT ALL ON ALL FUNCTIONS IN SCHEMA topology TO <db_user>;
+        -- GRANT ALL ON ALL TABLES IN SCHEMA topology TO <db_user>;
+        -- GRANT ALL ON ALL SEQUENCES IN SCHEMA topology TO <db_user>;
 
         -- before running this script
 

@@ -1,7 +1,10 @@
+import pytest
 from django.test import Client, TestCase
 from django.urls import reverse
 
 from tests.factories import AreaFactory
+
+pytestmark = pytest.mark.django_db
 
 
 class SimpleLocationsAPITests(TestCase):

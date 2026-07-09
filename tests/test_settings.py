@@ -10,11 +10,50 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import getpass
+import os
 from pathlib import Path
 from typing import List
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _library_path_from_ldconfig(soname: str) -> str | None:
+    import subprocess
+
+    try:
+        proc = subprocess.run(
+            ["ldconfig", "-p"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
+    needle = f" {soname} "
+    for line in proc.stdout.splitlines():
+        if needle in line and " => " in line:
+            return line.split("=>", 1)[1].strip().split()[0]
+    return None
+
+
+def _native_library_path(env_var: str, find_names: tuple[str, ...], ldconfig_name: str) -> str | None:
+    if path := os.environ.get(env_var):
+        return path
+    from ctypes.util import find_library
+
+    for name in find_names:
+        if path := find_library(name):
+            return _library_path_from_ldconfig(path) or path
+    return _library_path_from_ldconfig(ldconfig_name)
+
+
+# GeoDjango reads GDAL/GEOS paths from settings (not os.environ).
+if gdal_path := _native_library_path("GDAL_LIBRARY_PATH", ("gdal", "GDAL"), "libgdal.so"):
+    GDAL_LIBRARY_PATH = gdal_path
+if geos_path := _native_library_path("GEOS_LIBRARY_PATH", ("geos_c", "GEOS"), "libgeos_c.so"):
+    GEOS_LIBRARY_PATH = geos_path
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,6 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "django.contrib.gis",
     "mptt",
     "simple_locations",
@@ -79,16 +119,21 @@ WSGI_APPLICATION = "simple_locations.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 
-# Temporary:
-# docker run --rm -p 49156:5432 --name=dird -e POSTGRES_PASSWORD=dird -e POSTGRES_DB=dird_db -e POSTGRES_USER=dird postgis/postgis:14-3.2 -c fsync=off -c shared_buffers=4096MB
+# Tests use PostGIS via pytest-django (see test_settings DATABASES).
+# Defaults suit Postgres.app: OS user, no password, port 5432. pytest-django creates and
+# drops `simple_locations_test` when the role can CREATE DATABASE.
+# Override with POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_HOST, POSTGRES_PORT.
+_postgres_user = os.environ.get("POSTGRES_USER", getpass.getuser())
+_postgres_db = os.environ.get("POSTGRES_DB", _postgres_user)
+
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "USER": "dird",
-        "PASSWORD": "dird",
-        "HOST": "localhost",
-        "PORT": "49156",
-        "NAME": "dird_db",
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "USER": _postgres_user,
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
+        "NAME": _postgres_db,
         "TEST": {"NAME": "simple_locations_test"},
     }
 }

@@ -5,7 +5,11 @@ from django.contrib.gis.db.models.functions import AsGeoJSON as AsGeoJson_
 from django.db import models
 from django.db.models import F, Func, Value
 from django.db.models.fields.json import JSONField
-from django.db.models.functions.comparison import JSONObject
+
+try:
+    from django.db.models.functions.json import JSONObject
+except ImportError:
+    from django.db.models import JSONObject  # type: ignore[attr-defined,no-redef]
 
 
 class Quantize(models.Func):
@@ -58,7 +62,7 @@ class AsGeoJson(AsGeoJson_):
     """
 
     ...
-    template = f"{AsGeoJson_.template}::json"
+    template = f"{AsGeoJson_.template}" "::json"
     # output_field = models.JSONField()
 
 

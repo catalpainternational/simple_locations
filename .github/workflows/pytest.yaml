@@ -10,6 +10,10 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
 
     steps:
     - uses: actions/checkout@v3
@@ -17,19 +21,19 @@ jobs:
       run: pipx install poetry
     - uses: actions/setup-python@v4
       with:
-        python-version: "3.11"
+        python-version: "3.12"
         cache: "poetry"
     - run: poetry install --with dev --no-root
+
+    - name: Install OS level dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binutils libproj-dev gdal-bin libgdal-dev libgeos-dev
 
     - name: Lint with flake8
       if: always()
       run: |
-        poetry run flake8 .
-
-    - name: Install OS level dependencies
-      run: |
-          sudo apt-get update
-          sudo apt-get install binutils libproj-dev gdal-bin python3-psycopg2
+        poetry run flake8 simple_locations tests sl_tests
 
     - name: Check for missing migrations
       if: always()
@@ -37,7 +41,10 @@ jobs:
 
     - name: Test with pytest
       if: always()
-      run: poetry run pytest
+      run: |
+        export GDAL_LIBRARY_PATH="$(ldconfig -p | grep -m1 'libgdal.so ' | awk '{print $NF}')"
+        export GEOS_LIBRARY_PATH="$(ldconfig -p | grep -m1 'libgeos_c.so ' | awk '{print $NF}')"
+        poetry run pytest
 
     - name: Test mypy
       if: always()
@@ -53,16 +60,12 @@ jobs:
         postgres:
             # Docker Hub image
             image: postgis/postgis:15-3.3
-            # Provide the password for postgres. Should be sync'ed with test_settings file
             env:
-                POSTGRES_USER: dird
-                POSTGRES_PASSWORD: dird
-                POSTGRES_DBNAME: dird_db
-            # Set health checks to wait until postgres has started
+                POSTGRES_PASSWORD: postgres
             options: >-
                 --health-cmd pg_isready
                 --health-interval 10s
                 --health-timeout 5s
                 --health-retries 5
             ports:
-                - 49156:5432
+                - 5432:5432
