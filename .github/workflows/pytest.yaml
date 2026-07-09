@@ -35,6 +35,10 @@ jobs:
       run: |
         poetry run flake8 simple_locations tests sl_tests
 
+    - name: Check for missing migrations
+      if: always()
+      run: poetry run python manage.py makemigrations --check --dry-run
+
     - name: Test with pytest
       if: always()
       run: |

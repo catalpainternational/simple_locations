@@ -1,0 +1,46 @@
+name: Publish to PyPI
+
+# Publishes the package to PyPI on a published GitHub Release, authenticating
+# with a PyPI API token stored as the `PYPI_API_TOKEN` GitHub Actions secret.
+#
+# One-time setup:
+#   1. On PyPI: Account settings → API tokens → "Add API token", scoped to the
+#      `simple-locations` project. Copy the token (starts with `pypi-`).
+#   2. In this repo: Settings → Secrets and variables → Actions → New repository
+#      secret, name `PYPI_API_TOKEN`, value = the token.
+#      (or: `gh secret set PYPI_API_TOKEN --repo catalpainternational/simple_locations`)
+#
+# Release flow:
+#   1. Set the version in pyproject.toml and commit it.
+#   2. Create a GitHub Release whose tag matches that version (e.g. v4.1.0b2).
+#   3. Publishing it triggers this workflow.
+
+on:
+  release:
+    types: [published]
+  # Manual trigger for re-publishing a build if needed.
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  publish:
+    name: Build and publish to PyPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Build sdist + wheel
+        run: poetry build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
