@@ -19,7 +19,7 @@ exclude = '''
 
 [tool.poetry]
 name = "simple-locations"
-version = "4.0.2"
+version = "4.0.3"
 description = "The common location package for Catalpa's projects"
 authors = [
   "Joshua Brooks <josh@catalpa.io>",
@@ -37,7 +37,7 @@ homepage = "https://github.com/catalpainternational/simple_locations"
 python = "^3.8"
 django-mptt = "^0.16.0"
 pydantic = "^1.10.6"
-django-ninja = "^0.21.0"
+django-ninja = ">=0.21,<1"
 django-geojson = "^4.0.0"
 
 [tool.poetry.group.dev]
