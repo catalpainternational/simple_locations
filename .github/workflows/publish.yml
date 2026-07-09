@@ -44,3 +44,6 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
+          # Idempotent: re-running for a version already on PyPI is a no-op
+          # rather than a hard failure (e.g. tagging a release after a dispatch).
+          skip-existing: true
