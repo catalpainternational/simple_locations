@@ -38,11 +38,12 @@ repository = "https://github.com/catalpainternational/simple_locations"
 homepage = "https://github.com/catalpainternational/simple_locations"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 django-mptt = "^0.16.0"
 pydantic = ">=1.10, <3"
 django-ninja = ">=0.21, <2"
 django-geojson = "^4.1.0"
+geojson-pydantic = ">=1.0, <2"
 
 [tool.poetry.group.dev]
 optional = true
