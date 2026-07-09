@@ -1,0 +1,66 @@
+name: Publish to PyPI
+
+# Publishes the package to PyPI via OIDC "Trusted Publishing" — no API token or
+# password is stored in the repo. The trusted publisher must be configured once
+# on PyPI (project → Settings → Publishing) to match this repo, this workflow
+# filename (publish.yml) and the `pypi` environment used below.
+#
+# Release flow:
+#   1. Set the version in pyproject.toml and commit it.
+#   2. Create a GitHub Release whose tag matches that version (e.g. v4.1.0b2).
+#   3. Publishing it triggers this workflow.
+
+on:
+  release:
+    types: [published]
+  # Manual trigger for dry runs / re-publishing a build if needed.
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  build:
+    name: Build sdist + wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install poetry
+        run: pipx install poetry
+
+      - name: Build
+        run: poetry build
+
+      - name: Show built artifacts
+        run: ls -l dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    # Match this to the environment named in the PyPI trusted-publisher config.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/simple-locations
+    permissions:
+      # Required for OIDC — this is what lets PyPI trust the workflow with no
+      # token. Kept minimal (this job needs nothing else).
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI (OIDC trusted publishing)
+        uses: pypa/gh-action-pypi-publish@release/v1
